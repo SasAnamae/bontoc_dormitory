@@ -6,6 +6,7 @@
 <div class="container mt-4">
     <h1 class="mb-4">Welcome, {{ Auth::user()->name }}</h1>
 
+    <!-- First Row -->
     <div class="row">
         <!-- Total Dormitories -->
         <div class="col-md-3 mb-4">
@@ -29,6 +30,17 @@
             </div>
         </div>
 
+        <!-- Available Beds -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm border-secondary">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-secondary">Available Beds</h5>
+                    <h2 class="card-text fw-bold">{{ $availableBeds }}</h2>
+                    <p class="mb-0 text-muted">Beds Open</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Total Students -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-warning">
@@ -39,21 +51,33 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Second Row -->
+    <div class="row">
         <!-- Pending Reservations -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-info">
                 <div class="card-body text-center">
                     <h5 class="card-title text-info">Pending Reservations</h5>
-                    <h2 class="card-text fw-bold">{{  $reservationsCount }}</h2>
+                    <h2 class="card-text fw-bold">{{ $reservationsCount }}</h2>
                     <p class="mb-0 text-muted">Pending</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <!-- Monthly Payments -->
+        <!-- Occupants Currently Living -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm border-secondary">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-secondary">Occupants</h5>
+                    <h2 class="card-text fw-bold">{{ $occupantsCount }}</h2>
+                    <p class="mb-0 text-muted">Currently Living</p>
+                </div>
+            </div>
+        </div>
+
+         <!-- Monthly Payments -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-danger">
                 <div class="card-body text-center">
@@ -65,6 +89,12 @@
                 </div>
             </div>
         </div>
+
+        <!-- Placeholder (empty card to complete the row) -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-none bg-transparent"></div>
+        </div>
     </div>
 </div>
 @endsection
+

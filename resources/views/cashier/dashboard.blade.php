@@ -38,8 +38,8 @@
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-primary">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-primary">Registered Students</h5>
-                    <h2 class="fw-bold">{{ $registeredStudents }}</h2>
+                    <h5 class="card-title text-primary">Occupants</h5>
+                    <h2 class="fw-bold">{{ $occupantsCount }}</h2>
                     <p class="text-muted mb-0">As of {{ now()->format('F Y') }}</p>
                 </div>
             </div>

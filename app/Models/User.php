@@ -79,4 +79,8 @@
         {
             return $this->belongsToMany(\App\Models\PaymentSchedule::class)->withPivot('total_due');
         }
+        public function announcements()
+        {
+            return $this->belongsToMany(Announcement::class)->withTimestamps();
+        }
     }

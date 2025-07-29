@@ -8,7 +8,11 @@
     <div class="card shadow-sm rounded-4 mb-4">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4">
             <span>👤 Occupant’s Profile</span>
+             <a href="{{ route('admin.profile.edit', $profile->id) }}" class="btn btn-primary rounded-pill">
+        ✏️ Edit Profile
+            </a>
         </div>
+
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-6"><strong>Name:</strong> {{ $application->name }}</div>

@@ -34,7 +34,7 @@ class NewReservationNotification extends Notification
     {
         return [
             'message' => $this->reservation->user->name . ' has requested a reservation.',
-            'url' => route('admin.reservations.index'), // Redirect to reservations page
+            'url' => route('admin.reservations.index'), 
         ];
     }
 }

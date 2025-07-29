@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Student\TermsController;
-use App\Http\Controllers\Student\OccupantProfileController;
+use App\Http\Controllers\Student\OccupantProfileController as OccupantProfileController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\ReservationController as AdminReservationController;
 use App\Http\Controllers\Student\ReservationController as StudentReservationController;
 use App\Http\Controllers\Admin\StudentInfoController;
@@ -14,9 +15,11 @@ use App\Http\Controllers\Student\DormitoryController;
 use App\Http\Controllers\Student\RoomController;
 use App\Http\Controllers\Student\DormitoryAgreementController;
 use App\Http\Controllers\Student\StudentFormsController;
+use App\Http\Controllers\Admin\OccupantProfileController as AdminOccupantProfileController;
 use App\Http\Controllers\Cashier\PaymentController;
-
-
+use App\Http\Controllers\Student\StudentReportController;
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Models\Announcement;
 
     // Landing Page
     Route::get('/', function () {
@@ -40,12 +43,24 @@ use App\Http\Controllers\Cashier\PaymentController;
         }
         return redirect('/');
     })->middleware('auth')->name('dashboard');
+    
+
+    Route::get('/notifications/unread-count', function () {
+    return response()->json([
+        'count' => auth()->user()->unreadNotifications()->count()
+    ]);
+})->middleware('auth')->name('notifications.count');
+    Route::get('/notifications/fetch', [NotificationController::class, 'fetch'])->name('notifications.fetch');
+
+
 
     // ==================== ADMIN ROUTES ==================== //
     Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
         Route::resource('dormitories', App\Http\Controllers\Admin\DormitoryController::class);
         Route::resource('rooms', App\Http\Controllers\Admin\RoomController::class);
+        Route::get('/profile/{profile}/edit', [AdminOccupantProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile/{profile}', [AdminOccupantProfileController::class, 'update'])->name('profile.update');
         Route::get('/student-info', [App\Http\Controllers\Admin\StudentInfoController::class, 'index'])
         ->name('student_info.index');
 
@@ -60,6 +75,8 @@ use App\Http\Controllers\Cashier\PaymentController;
         Route::delete('/applications/{id}', [App\Http\Controllers\Admin\ApplicationController::class, 'destroy'])->name('applications.destroy');
         Route::post('/applications/{id}/approve', [App\Http\Controllers\Admin\ApplicationController::class, 'approve'])->name('applications.approve');
         Route::post('/applications/{id}/reject', [App\Http\Controllers\Admin\ApplicationController::class, 'reject'])->name('applications.reject');
+      
+
         
 
         Route::get('/payments/export', [App\Http\Controllers\Admin\PaymentController::class, 'export'])->name('payments.export');
@@ -69,7 +86,20 @@ use App\Http\Controllers\Cashier\PaymentController;
         Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
         Route::delete('/payments/{schedule}/student/{student}', [PaymentController::class, 'destroyStudentPayment'])
     ->name('admin.payments.destroyStudent');
-    });
+
+    
+        Route::get('/reports', [App\Http\Controllers\Admin\StudentReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/{report}', [App\Http\Controllers\Admin\StudentReportController::class, 'show'])->name('reports.show');
+        Route::put('/reports/{report}', [App\Http\Controllers\Admin\StudentReportController::class, 'update'])->name('reports.update');
+        Route::delete('/reports/{report}', [App\Http\Controllers\Admin\StudentReportController::class, 'destroy'])->name('reports.destroy');
+        
+
+        Route::get('/announcements', [App\Http\Controllers\Admin\AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::get('/announcements/create', [App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('announcements.create');
+        Route::post('/announcements', [App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('announcements.store');
+        Route::get('/announcements/{announcement}', [App\Http\Controllers\Admin\AnnouncementController::class, 'show'])->name('announcements.show');
+        Route::delete('/announcements/{announcement}', [App\Http\Controllers\Admin\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+});
 
   
 
@@ -99,16 +129,30 @@ use App\Http\Controllers\Cashier\PaymentController;
         Route::get('/payments', [App\Http\Controllers\Student\PaymentController::class, 'index'])->name('payments.index');
         Route::get('/payments/download', [App\Http\Controllers\Student\PaymentController::class, 'download'])->name('payments.download');
 
+        Route::get('report', [StudentReportController::class, 'index'])->name('report.index');
+        Route::get('report/create', [StudentReportController::class, 'create'])->name('report.create');
+        Route::get('report/{report}', [StudentReportController::class, 'show'])->name('report.show');
+        Route::post('report', [StudentReportController::class, 'store'])->name('report.store');
+        Route::delete('report/{report}', [StudentReportController::class, 'destroy'])->name('report.destroy');
     });
 
     Route::middleware(['auth'])->group(function () {
-        Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
-        Route::delete('/notifications', [App\Http\Controllers\NotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
+        // Delete single notification (works for both UUIDs and numeric IDs)
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])
+            ->where('id', '[0-9a-fA-F\-]+')
+            ->name('notifications.destroy');
+
+        // Delete all notifications for the authenticated user
+        Route::delete('/notifications', [NotificationController::class, 'destroyAll'])
+            ->name('notifications.destroyAll');
+
+        // Read and redirect for default notification types (GET)
         Route::get('/notifications/read/{id}', function($id) {
             $notification = auth()->user()->notifications()->findOrFail($id);
             $notification->markAsRead();
+
             return redirect()->to($notification->data['url'] ?? url()->previous());
-        })->name('notifications.read');
+        })->where('id', '[0-9a-fA-F\-]+')->name('notifications.read');
     });
 
 
@@ -122,3 +166,9 @@ use App\Http\Controllers\Cashier\PaymentController;
         ->name('payments.download');
     });
 
+    // Announcement Routes
+
+    Route::get('/announcements/{announcement}', function ($id) {
+        $announcement = Announcement::findOrFail($id);
+        return view('audience.show', compact('announcement'));
+    })->name('audience.show');

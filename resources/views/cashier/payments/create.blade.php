@@ -105,7 +105,6 @@
             filterSchedulesByStudent(studentId);
         });
 
-        // Trigger on page load if there's a pre-selected student
         if (studentSelect.value) {
             filterSchedulesByStudent(studentSelect.value);
         }

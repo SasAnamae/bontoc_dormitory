@@ -37,7 +37,8 @@ class DashboardController extends Controller
             ->sum('amount');
 
         return view('cashier.dashboard', [
-            'registeredStudents' => $registeredStudents,
+            'occupantsCount' => User::where('role', 'student')
+                ->where('application_status', 'approved')->count(),
             'studentsPaid' => $studentsPaid,
             'studentsNotPaid' => $studentsNotPaid,
             'monthlyTotal' => $monthlyTotal,

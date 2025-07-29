@@ -27,6 +27,14 @@
                     href="{{ route('admin.payments.index') }}">
                     <i class="fas fa-coins"></i> Payments
                 </a>
+                <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
+                    href="{{ route('admin.reports.index') }}">
+                    <i class="fas fa-flag"></i> Student Reports
+                </a>
+                <a class="nav-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}" 
+                    href="{{ route('admin.announcements.index') }}">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </a>
             </nav>
 
         @elseif(Auth::user()->role === 'cashier')
@@ -52,10 +60,13 @@
                     <i class="fas fa-home"></i> Dashboard
                 </a>
                 <a class="nav-link {{ request()->routeIs('student.reservations') ? 'active' : '' }}" href="{{ route('student.reservations') }}">
-                    <i class="fas fa-calendar-alt"></i> My Reservation
+                    <i class="fas fa-calendar-alt"></i> Reservation
                 </a>
                  <a class="nav-link {{ request()->routeIs('student.payments') ? 'active' : '' }}" href="{{ route('student.payments.index') }}">
-                    <i class="fas fa-receipt"></i> My Payments
+                    <i class="fas fa-receipt"></i> Payments
+                </a>
+                <a class="nav-link {{ request()->routeIs('student.report.*') ? 'active' : '' }}" href="{{ route('student.report.index') }}">
+                    <i class="fas fa-flag"></i> Reports
                 </a>
             </nav>
         @endif

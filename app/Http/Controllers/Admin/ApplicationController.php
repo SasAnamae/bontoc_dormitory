@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\OccupantProfile;
 use App\Notifications\ApplicationApprovalNotification;
 use Illuminate\Http\Request;
 
@@ -46,8 +47,9 @@ class ApplicationController extends Controller
     public function show($id)
     {
         $application = User::with(['occupantProfile', 'dormitoryAgreement'])->findOrFail($id);
+        $profile = $application->occupantProfile;
 
-        return view('admin.applications.show', compact('application'));
+        return view('admin.applications.show', compact('application', 'profile'));
     }
    public function destroy($id)
     {
