@@ -20,7 +20,7 @@
                     <label class="form-label fw-semibold">💬 Message</label>
                     <textarea name="message" class="form-control" rows="4" required></textarea>
                 </div>
-                <div class="mb-3">
+               <div class="mb-3" style="max-width: 250px;">
                     <label class="form-label fw-semibold">👥 Audience</label>
                     <select name="audience" class="form-select" id="audience" required>
                         <option value="all_students">All Students</option>

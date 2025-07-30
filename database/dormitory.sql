@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 25, 2025 at 01:36 PM
+-- Generation Time: Jul 29, 2025 at 11:58 AM
 -- Server version: 5.7.33
 -- PHP Version: 8.1.23
 
@@ -20,6 +20,35 @@ SET time_zone = "+00:00";
 --
 -- Database: `dormitory`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcements`
+--
+
+CREATE TABLE `announcements` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `audience` enum('all_students','selected_students','cashier') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcement_user`
+--
+
+CREATE TABLE `announcement_user` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `announcement_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -118,7 +147,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (15, '2025_07_18_161212_add_student_forms_to_users_table', 1),
 (16, '2025_07_19_024301_create_payment_schedules_table', 1),
 (17, '2025_07_20_080130_create_payments_table', 1),
-(18, '2025_07_24_070458_create_payment_schedule_user_table', 1);
+(18, '2025_07_24_070458_create_payment_schedule_user_table', 1),
+(19, '2025_07_25_142141_create_student_reports_table', 1),
+(20, '2025_07_26_141855_create_announcements_table', 1),
+(21, '2025_07_26_143847_create_announcement_user_table', 1);
 
 -- --------------------------------------------------------
 
@@ -299,6 +331,23 @@ CREATE TABLE `rooms` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `student_reports`
+--
+
+CREATE TABLE `student_reports` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `student_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `admin_response` text COLLATE utf8mb4_unicode_ci,
+  `status` enum('Pending','In Progress','Resolved') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pending',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -320,6 +369,20 @@ CREATE TABLE `users` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `announcements`
+--
+ALTER TABLE `announcements`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `announcement_user`
+--
+ALTER TABLE `announcement_user`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `announcement_user_announcement_id_foreign` (`announcement_id`),
+  ADD KEY `announcement_user_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `beds`
@@ -429,6 +492,13 @@ ALTER TABLE `rooms`
   ADD KEY `rooms_dormitory_id_foreign` (`dormitory_id`);
 
 --
+-- Indexes for table `student_reports`
+--
+ALTER TABLE `student_reports`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_reports_student_id_foreign` (`student_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -438,6 +508,18 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `announcements`
+--
+ALTER TABLE `announcements`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `announcement_user`
+--
+ALTER TABLE `announcement_user`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -467,7 +549,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `occupant_profiles`
@@ -512,6 +594,12 @@ ALTER TABLE `rooms`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `student_reports`
+--
+ALTER TABLE `student_reports`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
@@ -520,6 +608,13 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `announcement_user`
+--
+ALTER TABLE `announcement_user`
+  ADD CONSTRAINT `announcement_user_announcement_id_foreign` FOREIGN KEY (`announcement_id`) REFERENCES `announcements` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `announcement_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `beds`
@@ -567,6 +662,12 @@ ALTER TABLE `reservations`
 --
 ALTER TABLE `rooms`
   ADD CONSTRAINT `rooms_dormitory_id_foreign` FOREIGN KEY (`dormitory_id`) REFERENCES `dormitories` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `student_reports`
+--
+ALTER TABLE `student_reports`
+  ADD CONSTRAINT `student_reports_student_id_foreign` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
