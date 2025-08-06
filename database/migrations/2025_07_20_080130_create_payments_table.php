@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('schedule_id')->nullable()->constrained('payment_schedules')->onDelete('set null');
+            $table->date('payment_date')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->string('or_number')->unique(); 
-            $table->text('remarks')->nullable(); 
-            $table->enum('status', ['Confirmed'])->default('Confirmed'); 
+            $table->string('or_number')->unique();
+            $table->text('remarks')->nullable();
+            $table->enum('status', ['Confirmed'])->default('Confirmed');
             $table->timestamp('paid_at')->nullable();
-            $table->foreignId('cashier_id')->nullable()->constrained('users')->onDelete('set null'); 
+            $table->foreignId('cashier_id')->nullable()->constrained('users')->onDelete('set null');
+
             $table->timestamps();
         });
     }

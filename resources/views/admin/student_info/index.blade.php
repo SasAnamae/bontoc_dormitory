@@ -38,7 +38,7 @@
                         <tr>
                             <td class="px-4 fw-semibold text-dark">{{ $student->name }}</td>
                             <td>{{ $student->email }}</td>
-                            <td>{{ $student->occupantProfile->course_section ?? '—' }}</td>
+                            <td>{{ $student->occupantProfile->course ?? '—' }}-{{ $student->occupantProfile->year_section ?? '—' }}</td>
                             <td>
                                 <span class="badge rounded-pill px-3 py-2 text-light 
                                     @if($student->application_status === 'Approved') bg-success 

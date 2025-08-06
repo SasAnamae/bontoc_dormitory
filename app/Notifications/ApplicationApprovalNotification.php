@@ -25,6 +25,7 @@ class ApplicationApprovalNotification extends Notification
     {
         return [
             'message' => "Your application has been {$this->status}.",
+             'url' => route('student.profile.create'), 
         ];
     }
 }

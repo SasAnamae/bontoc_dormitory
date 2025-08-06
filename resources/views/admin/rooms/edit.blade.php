@@ -66,16 +66,24 @@
 document.addEventListener('DOMContentLoaded', function () {
     const bedType = document.getElementById('bed_type');
     const decksField = document.getElementById('num_decks_field');
-    bedType.addEventListener('change', function () {
-        if (this.value === 'Double Deck') {
+    const numDecksInput = document.getElementById('num_decks');
+
+    function toggleDecksField() {
+        if (bedType.value === 'Double Deck') {
             decksField.style.display = 'block';
-            document.getElementById('num_decks').required = true;
+            numDecksInput.removeAttribute('disabled');
+            numDecksInput.setAttribute('required', 'required');
         } else {
             decksField.style.display = 'none';
-            document.getElementById('num_decks').required = false;
+            numDecksInput.removeAttribute('required');
+            numDecksInput.setAttribute('disabled', 'disabled');
         }
-    });
+    }
+
+    bedType.addEventListener('change', toggleDecksField);
+    toggleDecksField(); // On page load
 });
+
 </script>
 @endpush
 @endsection

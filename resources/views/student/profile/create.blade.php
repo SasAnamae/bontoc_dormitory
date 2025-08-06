@@ -11,20 +11,9 @@
     <p class="text-muted mb-4">Please complete all required fields to proceed with your dormitory application.</p>
     <div class="card shadow-sm rounded-4 mx-auto" style="max-width: 900px;">
         <div class="card-body p-4">
-            <form action="{{ route('student.profile.store') }}" method="POST">
-                @csrf
-                @include('student.profile.form')
-                <div class="d-flex justify-content-end gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">
-                        <i class="fas fa-save me-2"></i> Submit Profile
-                    </button>
-                    <a href="{{ route('student.dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">
-                        Cancel
-                    </a>
-                </div>
-            </form>
+            {{-- NOTE: $isEdit = false by default --}}
+            @include('student.profile.form', ['isEdit' => false])
         </div>
     </div>
 </div>
 @endsection
-

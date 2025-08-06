@@ -17,7 +17,6 @@
             <div class="flex-grow-1 me-2">
                 <a href="{{ route('notifications.read', $notification->id) }}"
                    class="text-decoration-none {{ $notification->read_at ? 'text-muted' : 'fw-bold text-dark' }}">
-                    <div>{{ $notification->data['title'] ?? 'Notification' }}</div>
                     <div class="small text-secondary">
                         {{ $notification->data['message'] ?? 'No message' }}
                     </div>

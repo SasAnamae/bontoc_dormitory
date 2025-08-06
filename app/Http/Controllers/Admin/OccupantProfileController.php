@@ -17,7 +17,8 @@ class OccupantProfileController extends Controller
     public function update(Request $request, OccupantProfile $profile)
     {
         $request->validate([
-            'course_section' => 'required|string|max:255',
+            'cours' => 'required|string|max:255',
+            'year_section' => 'required|string|max:255',
             'home_address' => 'required|string',
             'cellphone' => 'required|string',
             'email' => 'required|email',
@@ -43,7 +44,8 @@ class OccupantProfileController extends Controller
         }
 
         $profile->update([
-            'course_section' => $request->course_section,
+            'course' => $request->course,
+            'year_section' => $request->year_section,
             'home_address' => $request->home_address,
             'cellphone' => $request->cellphone,
             'email' => $request->email,

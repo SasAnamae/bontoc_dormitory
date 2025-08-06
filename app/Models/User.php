@@ -54,6 +54,10 @@
             return $this->hasOne(OccupantProfile::class, 'user_id');
         }
 
+        public function applicationForm()
+        {
+            return $this->hasOne(ApplicationForm::class, 'user_id');
+        }
         public function dormitoryAgreement()
         {
             return $this->hasOne(DormitoryAgreement::class);
@@ -66,13 +70,6 @@
         public function room()
         {
             return $this->belongsTo(Room::class);
-        }
-      
-        public function paymentSchedules()
-        {
-            return $this->belongsToMany(PaymentSchedule::class, 'payment_schedule_user')
-                        ->withPivot('additional_fee')
-                        ->withTimestamps();
         }
 
         public function schedules()

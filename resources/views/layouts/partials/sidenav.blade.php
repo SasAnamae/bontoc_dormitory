@@ -17,7 +17,7 @@
                 </a>
                 <a class="nav-link {{ request()->routeIs('admin.reservations.*') ? 'active' : '' }}" 
                     href="{{ route('admin.reservations.index') }}">
-                    <i class="fas fa-clipboard-list"></i> Reservations
+                    <i class="fas fa-clipboard-list"></i> Requests
                 </a>
                <a class="nav-link {{ request()->routeIs('admin.applications.*') ? 'active' : '' }}" 
                     href="{{ route('admin.applications.index') }}">

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DormitoryAgreement;
+use App\Notifications\StudentFinalizedFormsNotification;
+use Illuminate\Support\Facades\Notification;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DormitoryAgreementController extends Controller
@@ -17,21 +20,27 @@ class DormitoryAgreementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'agreement_text' => 'required|string',
             'student_name' => 'required|string',
-            'course_year' => 'required|string',
+            'course' => 'required|string',
+            'year_section' => 'required|string',
             'date_signed' => 'required|date',
         ]);
 
         DormitoryAgreement::create([
             'user_id' => Auth::id(),
-            'agreement_text' => $request->agreement_text,
             'student_name' => $request->student_name,
-            'course_year' => $request->course_year,
+            'course' => $request->course,
+            'year_section' => $request->year_section,
             'date_signed' => $request->date_signed,
         ]);
 
-        return redirect()->route('student.forms.summary')
+        $admins = User::where('role','admin')->get();
+
+        Notification::send($admins, 
+        new StudentFinalizedFormsNotification(auth()->user()));
+
+
+        return redirect()->route('student.dashboard')
             ->with('success', 'Dormitory Agreement saved successfully!');
     }
 
@@ -43,16 +52,16 @@ class DormitoryAgreementController extends Controller
     public function update(Request $request, DormitoryAgreement $agreement)
     {
         $request->validate([
-            'agreement_text' => 'required|string',
             'student_name' => 'required|string',
-            'course_year' => 'required|string',
+            'course' => 'required|string',
+            'year_section' => 'required|string',
             'date_signed' => 'required|date',
         ]);
 
         $agreement->update([
-            'agreement_text' => $request->agreement_text,
             'student_name' => $request->student_name,
-            'course_year' => $request->course_year,
+            'course' => $request->course,
+            'year_section' => $request->year_section,
             'date_signed' => $request->date_signed,
         ]);
 

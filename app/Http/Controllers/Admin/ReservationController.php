@@ -16,7 +16,7 @@ class ReservationController extends Controller
 
     public function updateStatus($id, $status)
     {
-        $reservation = Reservation::findOrFail($id);
+        $reservation = Reservation::with('bed.room')->findOrFail($id);
         $reservation->status = $status;
         $reservation->save();
 
@@ -29,22 +29,26 @@ class ReservationController extends Controller
         }
 
         $reservation->user->notify(new ReservationStatusNotification($reservation));
-
         return redirect()->back()->with('success', "Reservation {$status} successfully.");
     }
 
     public function destroy($id)
     {
-        $reservation = Reservation::findOrFail($id);
+        $reservation = Reservation::with('bed.room')->findOrFail($id);
 
-        if ($reservation->status === 'Approved') {
+        if ($reservation->status === 'Approved' && $reservation->bed && $reservation->bed->room) {
             $reservation->bed->update(['is_occupied' => false]);
             $reservation->bed->room->increment('available_beds');
             $reservation->bed->room->decrement('occupied_beds');
         }
 
+        $reservation->user->notify(new ReservationStatusNotification(
+        null,
+        'Your reservation and application form have been reset. You may reapply.',
+        ));
+
         $reservation->delete();
 
-        return back()->with('success', 'Reservation deleted successfully.');
+        return back()->with('success', 'Application and reservation deleted successfully.');
     }
 }

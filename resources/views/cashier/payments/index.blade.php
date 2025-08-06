@@ -3,27 +3,21 @@
 @section('content')
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <a href="{{ route('cashier.payments.create') }}" class="btn btn-success rounded-pill">
-                <i class="fas fa-plus"></i> Payment
-            </a>
-        </div>
-       <form action="{{ route('cashier.payments.index') }}" method="GET" class="d-flex flex-wrap align-items-center gap-1">
-            <input type="text" name="name" class="form-control form-control-sm rounded-pill"
-                placeholder="Student Name" value="{{ request('name') }}" style="max-width: 160px;">
-            
-            <input type="text" name="or_number" class="form-control form-control-sm rounded-pill"
-                placeholder="OR Number" value="{{ request('or_number') }}" style="max-width: 140px;">
-            
+        <a href="{{ route('cashier.payments.create') }}" class="btn btn-success rounded-pill">
+            <i class="fas fa-plus"></i> New Payment
+        </a>
+        <form action="{{ route('cashier.payments.index') }}" method="GET" class="d-flex flex-wrap align-items-center gap-1">
+            <input type="text" name="name" class="form-control form-control-sm rounded-pill" placeholder="Student Name" value="{{ request('name') }}" style="max-width: 160px;">
+            <input type="text" name="or_number" class="form-control form-control-sm rounded-pill" placeholder="OR Number" value="{{ request('or_number') }}" style="max-width: 140px;">
             <button type="submit" class="btn btn-sm btn-primary rounded-pill d-flex align-items-center">
                 <i class="fas fa-search me-1"></i> Search
             </button>
-
-            <button type="button" id="downloadExcelBtn" class="btn btn-sm btn-outline-success rounded-pill d-flex align-items-center">
+             <button type="button" id="downloadExcelBtn" class="btn btn-sm btn-outline-success rounded-pill d-flex align-items-center">
                 <i class="fas fa-file-excel me-1"></i> Download
             </button>
         </form>
     </div>
+
     @if($payments->count())
     <div class="table-responsive shadow rounded-4">
         <table class="table table-striped align-middle mb-0">
@@ -31,10 +25,8 @@
                 <tr>
                     <th>#</th>
                     <th>Student</th>
-                    <th>Schedule</th>
                     <th>OR Number</th>
                     <th>Amount</th>
-                    <th>Status</th>
                     <th>Paid At</th>
                     <th>Remarks</th>
                     <th>Actions</th>
@@ -45,15 +37,9 @@
                 <tr>
                     <td>{{ $payment->id }}</td>
                     <td>{{ $payment->user->name }}</td>
-                    <td>{{ $payment->schedule ? $payment->schedule->name : '—' }}</td>
                     <td>{{ $payment->or_number }}</td>
                     <td>₱{{ number_format($payment->amount, 2) }}</td>
-                    <td>
-                        <span class="badge bg-{{ $payment->status === 'Confirmed' ? 'success' : 'secondary' }}">
-                            {{ $payment->status }}
-                        </span>
-                    </td>
-                    <td>{{ $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at)->format('M d, Y H:i') : '—' }}</td>
+                    <td>{{ $payment->paid_at ? $payment->paid_at->format('M d, Y h:i A') : '—' }}</td>
                     <td>{{ $payment->remarks ?? '—' }}</td>
                     <td>
                         <div class="d-flex gap-2">

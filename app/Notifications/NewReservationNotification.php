@@ -33,7 +33,7 @@ class NewReservationNotification extends Notification
    public function toDatabase($notifiable)
     {
         return [
-            'message' => $this->reservation->user->name . ' has requested a reservation.',
+            'message' => $this->reservation->user->name . ' has dormitory application request.',
             'url' => route('admin.reservations.index'), 
         ];
     }

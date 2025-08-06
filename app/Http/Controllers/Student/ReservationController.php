@@ -31,6 +31,20 @@ class ReservationController extends Controller
             return back()->with('error', 'This bed is already reserved.');
         }
 
+        // Check for existing pending or approved reservations
+        $existing = Reservation::where('user_id', Auth::id())
+            ->whereIn('status', ['Pending', 'Approved'])
+            ->first();
+
+        if ($existing) {
+            if ($existing->status === 'Approved') {
+                return back()->with('error', 'You already have an approved reservation. No need to reserve again.');
+            } else {
+                return back()->with('error', 'You already have a pending reservation. Please wait for admin approval or cancel it first.');
+            }
+        }
+
+        // Proceed with reservation if none exists
         $reservation = Reservation::create([
             'user_id' => Auth::id(),
             'bed_id' => $bed->id,
@@ -38,6 +52,7 @@ class ReservationController extends Controller
             'status' => 'Pending',
         ]);
 
+        // Notify all admins
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new NewReservationNotification($reservation));
@@ -45,6 +60,8 @@ class ReservationController extends Controller
 
         return redirect()->route('student.dashboard')->with('success', 'Reservation submitted! Waiting for admin approval.');
     }
+
+
 
     public function destroy($id)
     {

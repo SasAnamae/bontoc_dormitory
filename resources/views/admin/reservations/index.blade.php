@@ -1,11 +1,11 @@
 @extends('layouts.master')
 
-@section('title', 'Manage Reservations')
+@section('title', 'Manage Applications')
 
 @section('content')
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold text-primary mb-0">🛏️ Manage Reservations</h4>
+        <h4 class="fw-bold text-primary mb-0">🛏️ Manage Applications</h4>
     </div>
 
     <div class="row g-3">

@@ -11,7 +11,8 @@ class OccupantProfile extends Model
 
     protected $fillable = [
         'user_id',
-        'course_section',
+        'course',
+        'year_section',
         'home_address',
         'cellphone',
         'email',
@@ -25,8 +26,11 @@ class OccupantProfile extends Model
         'father_phone',
         'mother_fullname',
         'mother_phone',
-        'electrical_appliances',
         'total_monthly',
+    ];
+
+    protected $casts = [
+        'electrical_appliances' => 'array',
     ];
 
     public function user()

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('occupant_profiles', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->string('course_section')->nullable();
+        $table->string('course')->nullable();
+        $table->string('year_section')->nullable();
         $table->string('home_address')->nullable();
         $table->string('cellphone')->nullable();
         $table->string('email')->nullable();

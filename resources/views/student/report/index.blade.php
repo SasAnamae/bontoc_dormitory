@@ -58,8 +58,8 @@
                 </div>
             </div>
         @empty
-            <div class="col">
-                <div class="alert alert-info">You haven’t submitted any reports yet.</div>
+            <div class="alert alert-info rounded-pill text-center shadow-sm mt-4">
+               You haven’t submitted any reports yet.
             </div>
         @endforelse
     </div>

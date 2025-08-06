@@ -21,29 +21,18 @@ class PaymentsExport implements FromCollection, WithHeadings, WithStyles, Should
     public function collection()
     {
         return $this->payments->map(function ($payment) {
-            $schedule = $payment->schedule;
             $user = $payment->user;
 
-            $pivot = $schedule->students->firstWhere('id', $user->id)?->pivot;
-
-            $baseRate = $schedule->rate ?? 0;
-            $additionalFee = $pivot?->additional_fee ?? 0;
-            $totalDue = $pivot?->total_due ?? ($baseRate + $additionalFee);
-
             return [
-                'Payment ID'      => $payment->id,
-                'Student Name'    => $user->name ?? 'N/A',
-                'Course & Year'   => $user->occupantProfile?->course_section ?? 'N/A',
-                'Room'            => $user->reservations->first()?->room?->name ?? 'N/A',
-                'Schedule Name'   => $schedule->name ?? 'N/A',
-                'Base Rate (₱)'   => number_format($baseRate, 2),
-                'Additional Fee (₱)' => number_format($additionalFee, 2),
-                'Total Due (₱)'   => number_format($totalDue, 2),
-                'Amount Paid (₱)' => number_format($payment->amount ?? 0, 2),
-                'Status'          => ucfirst($payment->status ?? 'Unpaid'),
-                'OR Number'       => $payment->or_number ?? '—',
-                'Paid At'         => $payment->paid_at ? $payment->paid_at->format('M d, Y H:i') : 'Not Yet Paid',
-                'Cashier Name'    => $payment->cashier->name ?? 'N/A',
+                'Payment ID'     => $payment->id,
+                'Student Name'   => $user->name ?? 'N/A',
+                'Course & Year'  => $user->occupantProfile?->course ?? 'N/A' . ' ' . $user->occupantProfile?->year_section ?? 'N/A',
+                'Room'           => $user->reservations->first()?->room?->name ?? 'N/A',
+                'Amount (₱)'     => number_format($payment->amount, 2),
+                'OR Number'      => $payment->or_number ?? '—',
+                'Paid Date'      => $payment->paid_at ? $payment->paid_at->format('M d, Y') : 'Not Yet Paid',
+                'Remarks'        => $payment->remarks ?? '—',
+                'Cashier'        => $payment->cashier->name ?? 'System',
             ];
         });
     }
@@ -55,22 +44,18 @@ class PaymentsExport implements FromCollection, WithHeadings, WithStyles, Should
             'Student Name',
             'Course & Year',
             'Room',
-            'Schedule Name',
-            'Base Rate (₱)',
-            'Additional Fee (₱)',
-            'Total Due (₱)',
-            'Amount Paid (₱)',
-            'Status',
+            'Amount (₱)',
             'OR Number',
-            'Paid At',
-            'Cashier Name',
+            'Paid Date',
+            'Remarks',
+            'Cashier',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => [ // Header row styling
+            1 => [
                 'font' => [
                     'bold' => true,
                     'size' => 12,

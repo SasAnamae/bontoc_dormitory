@@ -17,13 +17,14 @@ class OccupantProfileController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'course_section' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
+            'year_section' => 'required|string|max:255',
             'home_address' => 'required|string',
             'cellphone' => 'required|string',
             'email' => 'required|email',
             'birthday' => 'required|date',
             'age' => 'required|integer',
-            'religion' => 'nullable|string',
+            'religion' => 'required|string',
             'scholarship' => 'nullable|string',
             'blood_type' => 'nullable|string',
             'allergies' => 'nullable|string',
@@ -37,15 +38,17 @@ class OccupantProfileController extends Controller
         ]);
 
         // Combine selected appliances and other_appliance
-        $appliances = $request->electrical_appliances ?? [];
-        if (in_array('Others', $appliances) && $request->filled('other_appliance')) {
-            $appliances[] = $request->other_appliance;
-            $appliances = array_diff($appliances, ['Others']); // Remove placeholder
-        }
+       $appliances = $request->electrical_appliances ?? [];
+            if (in_array('Others', $appliances) && $request->filled('other_appliance')) {
+                $appliances[] = $request->other_appliance;
+                $appliances = array_diff($appliances, ['Others']); // Remove "Others" placeholder
+            }
+
 
         OccupantProfile::create([
             'user_id' => Auth::id(),
-            'course_section' => $request->course_section,
+            'course' => $request->course,
+            'year_section' => $request->year_section,
             'home_address' => $request->home_address,
             'cellphone' => $request->cellphone,
             'email' => $request->email,
@@ -59,7 +62,7 @@ class OccupantProfileController extends Controller
             'father_phone' => $request->father_phone,
             'mother_fullname' => $request->mother_fullname,
             'mother_phone' => $request->mother_phone,
-            'electrical_appliances' => implode(',', $appliances),
+            'electrical_appliances' => !empty($appliances) ? implode(',', $appliances) : null,
             'total_monthly' => $request->total_monthly,
         ]);
 
@@ -83,7 +86,8 @@ class OccupantProfileController extends Controller
         }
 
         $request->validate([
-            'course_section' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
+            'year_section' => 'required|string|max:255',
             'home_address' => 'required|string',
             'cellphone' => 'required|string',
             'email' => 'required|email',
@@ -102,14 +106,16 @@ class OccupantProfileController extends Controller
             'other_appliance' => 'nullable|string',
         ]);
 
-        $appliances = $request->electrical_appliances ?? [];
+      $appliances = $request->electrical_appliances ?? [];
         if (in_array('Others', $appliances) && $request->filled('other_appliance')) {
             $appliances[] = $request->other_appliance;
             $appliances = array_diff($appliances, ['Others']);
         }
 
+
         $profile->update([
-            'course_section' => $request->course_section,
+            'course' => $request->course,
+            'year_section' => $request->year_section,
             'home_address' => $request->home_address,
             'cellphone' => $request->cellphone,
             'email' => $request->email,
@@ -123,7 +129,7 @@ class OccupantProfileController extends Controller
             'father_phone' => $request->father_phone,
             'mother_fullname' => $request->mother_fullname,
             'mother_phone' => $request->mother_phone,
-            'electrical_appliances' => implode(',', $appliances),
+            'electrical_appliances' => !empty($appliances) ? implode(',', $appliances) : null,
             'total_monthly' => $request->total_monthly,
         ]);
 

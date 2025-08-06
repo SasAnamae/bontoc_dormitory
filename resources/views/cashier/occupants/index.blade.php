@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('title', 'View All Occupants')
-
 @section('content')
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -22,51 +21,32 @@
                     <th>Total Due</th>
                     <th>Total Paid</th>
                     <th>Balance</th>
-                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($occupants as $student)
-                    @foreach($student->paymentSchedules as $schedule)
-                        @php
-                            $pivot = $schedule->pivot;
-                            $additionalFee = $pivot->additional_fee ?? 0;
-                            $baseRate = $schedule->rate;
-                            $totalDue = $pivot->total_due ?? ($baseRate + $additionalFee);
-                            $payments = $student->payments->where('schedule_id', $schedule->id);
-                            $totalPaid = $payments->sum('amount');
-                            $balance = max($totalDue - $totalPaid, 0);
-                            $status = 'Pending';
-                            $badge = 'secondary';
-                            if ($totalPaid >= $totalDue) {
-                                $status = 'Paid';
-                                $badge = 'success';
-                            } elseif ($totalPaid > 0) {
-                                $status = 'Partial';
-                                $badge = 'info';
-                            } elseif (now()->gt($schedule->due_date)) {
-                                $status = 'Overdue';
-                                $badge = 'danger';
-                            }
-                            $reservation = $student->reservations->first();
-                            $roomName = $reservation?->room?->name;
-                            $dormName = $reservation?->room?->dormitory?->name;
-                            $roomDisplay = $roomName ? "$roomName - $dormName" : 'No Reservation';
-                        @endphp
-                        <tr>
-                            <td class="fw-semibold">{{ $student->name }}</td>
-                            <td>{{ $student->email }}</td>
-                            <td>{{ $student->occupantProfile->course_section ?? '—' }}</td>
-                            <td><span class="text-muted">{{ $roomDisplay }}</span></td>
-                            <td>₱{{ number_format($totalDue, 2) }}</td>
-                            <td>₱{{ number_format($totalPaid, 2) }}</td>
-                            <td>₱{{ number_format($balance, 2) }}</td>
-                            <td><span class="badge bg-{{ $badge }}">{{ $status }}</span></td>
-                        </tr>
-                    @endforeach
+                    @php
+                        $totalPaid = $student->payments->sum('amount');
+                        $totalDue = 0;
+                        $balance = max($totalDue - $totalPaid, 0);
+
+                        $reservation = $student->reservations->first();
+                        $roomName = $reservation?->room?->name;
+                        $dormName = $reservation?->room?->dormitory?->name;
+                        $roomDisplay = $roomName ? "$roomName - $dormName" : 'No Reservation';
+                    @endphp
+                    <tr>
+                        <td class="fw-semibold">{{ $student->name }}</td>
+                        <td>{{ $student->email }}</td>
+                        <td>{{ $student->applicationForm->course ?? '—' }}-{{ $student->applicationForm->year_section ?? '—' }}</td>
+                        <td><span class="text-muted">{{ $roomDisplay }}</span></td>
+                        <td>₱{{ number_format($totalDue, 2) }}</td>
+                        <td>₱{{ number_format($totalPaid, 2) }}</td>
+                        <td>₱{{ number_format($balance, 2) }}</td>
+                    </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center text-muted">No approved occupants found.</td>
+                        <td colspan="7" class="text-center text-muted">No approved occupants found.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -104,4 +84,3 @@
     });
 </script>
 @endpush
-

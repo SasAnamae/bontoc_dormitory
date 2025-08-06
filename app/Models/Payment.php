@@ -48,9 +48,9 @@ class Payment extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function schedule()
+    public function scopeWithCashier($query)
     {
-        return $this->belongsTo(PaymentSchedule::class, 'schedule_id');
+        return $query->with('cashier');
     }
     public function download()
     {

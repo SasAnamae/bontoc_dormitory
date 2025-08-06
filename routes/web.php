@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\OccupantProfileController as AdminOccupantProfile
 use App\Http\Controllers\Cashier\PaymentController;
 use App\Http\Controllers\Student\StudentReportController;
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Student\ApplicationFormController;
+use App\Http\Controllers\Cashier\ApplicationController;
 use App\Models\Announcement;
 
     // Landing Page
@@ -70,14 +72,12 @@ use App\Models\Announcement;
         Route::delete('/reservations/{reservation}', [App\Http\Controllers\Admin\ReservationController::class, 'destroy'])->name('reservations.destroy');
         
         Route::get('/applications', [App\Http\Controllers\Admin\ApplicationController::class, 'index'])->name('applications.index');
-        Route::get('/applications/{id}', [App\Http\Controllers\Admin\ApplicationController::class, 'show'])
+        Route::get('/applications/{user}', [App\Http\Controllers\Admin\ApplicationController::class, 'show'])
     ->name('applications.show');
         Route::delete('/applications/{id}', [App\Http\Controllers\Admin\ApplicationController::class, 'destroy'])->name('applications.destroy');
         Route::post('/applications/{id}/approve', [App\Http\Controllers\Admin\ApplicationController::class, 'approve'])->name('applications.approve');
         Route::post('/applications/{id}/reject', [App\Http\Controllers\Admin\ApplicationController::class, 'reject'])->name('applications.reject');
       
-
-        
 
         Route::get('/payments/export', [App\Http\Controllers\Admin\PaymentController::class, 'export'])->name('payments.export');
         Route::get('/payments/logs/export', [App\Http\Controllers\Admin\PaymentController::class, 'exportLogs'])->name('payments.logs.export');
@@ -123,9 +123,7 @@ use App\Models\Announcement;
         Route::post('/profile', [OccupantProfileController::class, 'store'])->name('profile.store');
         Route::get('/profile/{profile}/edit', [OccupantProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile/{profile}', [OccupantProfileController::class, 'update'])->name('profile.update');
-        Route::get('/forms/summary', [StudentFormsController::class, 'summary'])->name('forms.summary');
-        Route::post('/forms/finalize', [StudentFormsController::class, 'finalize'])->name('forms.finalize');
-
+    
         Route::get('/payments', [App\Http\Controllers\Student\PaymentController::class, 'index'])->name('payments.index');
         Route::get('/payments/download', [App\Http\Controllers\Student\PaymentController::class, 'download'])->name('payments.download');
 
@@ -134,7 +132,13 @@ use App\Models\Announcement;
         Route::get('report/{report}', [StudentReportController::class, 'show'])->name('report.show');
         Route::post('report', [StudentReportController::class, 'store'])->name('report.store');
         Route::delete('report/{report}', [StudentReportController::class, 'destroy'])->name('report.destroy');
+
+        // Application Form Routes (step before profile)
+        Route::get('/application', [ApplicationFormController::class, 'show'])->name('application.form');
+        Route::post('/application', [ApplicationFormController::class, 'store'])->name('application.store');
+        Route::get('/application/view', [ApplicationFormController::class, 'view'])->name('student.application.view');
     });
+
 
     Route::middleware(['auth'])->group(function () {
         // Delete single notification (works for both UUIDs and numeric IDs)
@@ -164,6 +168,7 @@ use App\Models\Announcement;
         Route::resource('payments', App\Http\Controllers\Cashier\PaymentController::class)->except(['show']);;
         Route::get('payments/download', [App\Http\Controllers\Cashier\PaymentController::class, 'download'])
         ->name('payments.download');
+        Route::get('/application/{user}', [App\Http\Controllers\Cashier\ApplicationController::class, 'show'])->name('application.show');
     });
 
     // Announcement Routes

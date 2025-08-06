@@ -80,57 +80,61 @@ class RoomController extends Controller
         $dormitories = Dormitory::all();
         return view('admin.rooms.edit', compact('room', 'dormitories'));
     }
+    public function update(Request $request, Room $room)
+    {
+        $request->validate([
+            'dormitory_id' => 'required|exists:dormitories,id',
+            'name' => 'required|string|max:255',
+            'photo' => 'nullable|image|max:2048',
+            'total_beds' => 'required|integer|min:1',
+            'bed_type' => 'required|in:Single,Double Deck',
+            'num_decks' => 'nullable|integer|min:1|required_if:bed_type,Double Deck',
+        ]);
 
-   public function update(Request $request, Room $room)
-{
-    $request->validate([
-        'dormitory_id' => 'required|exists:dormitories,id',
-        'name' => 'required|string|max:255',
-        'photo' => 'nullable|image|max:2048',
-        'total_beds' => 'required|integer|min:1',
-        'bed_type' => 'required|in:Single,Double Deck',
-        'num_decks' => 'nullable|integer|min:1|required_if:bed_type,Double Deck',
-    ]);
+        // Update photo if uploaded
+        if ($request->hasFile('photo')) {
+            $room->photo = base64_encode(file_get_contents($request->file('photo')));
+        }
 
-    // Update photo if uploaded
-    if ($request->hasFile('photo')) {
-        $room->photo = base64_encode(file_get_contents($request->file('photo')));
-    }
+        // Update Room fields
+        $room->update([
+            'dormitory_id'   => $request->dormitory_id,
+            'name'           => $request->name,
+            'total_beds'     => $request->total_beds,
+            'bed_type'       => $request->bed_type,
+            'num_decks'      => $request->bed_type === 'Double Deck' ? $request->num_decks : 0,
+            'available_beds' => $request->total_beds - $room->occupied_beds,
+        ]);
 
-    // Update Room fields
-    $room->update([
-        'dormitory_id'   => $request->dormitory_id,
-        'name'           => $request->name,
-        'total_beds'     => $request->total_beds,
-        'bed_type'       => $request->bed_type,
-        'num_decks'      => $request->bed_type === 'Double Deck' ? $request->num_decks : 0,
-        'available_beds' => $request->total_beds - $room->occupied_beds,
-    ]);
+        // If bed type or total beds change, update the bed structure
+        if ($room->bed_type !== $request->bed_type || $room->total_beds != $request->total_beds) {
+            // Preserve existing beds that are not part of the update
+            $room->beds()->delete(); // Optionally, only delete beds that need modification
 
-        $room->beds()->delete();
-
-        if ($room->bed_type === 'Double Deck' && $room->num_decks > 0) {
-            for ($deck = 1; $deck <= $room->num_decks; $deck++) {
-                $room->beds()->create([
-                    'deck'     => "Deck $deck",
-                    'position' => 'Upper',
-                ]);
-                $room->beds()->create([
-                    'deck'     => "Deck $deck",
-                    'position' => 'Lower',
-                ]);
-            }
-        } else {
-            for ($i = 1; $i <= $room->total_beds; $i++) {
-                $room->beds()->create([
-                    'deck'     => "Bed $i",
-                    'position' => null,
-                ]);
+            if ($request->bed_type === 'Double Deck' && $request->num_decks > 0) {
+                for ($deck = 1; $deck <= $request->num_decks; $deck++) {
+                    $room->beds()->create([
+                        'deck'     => "Deck $deck",
+                        'position' => 'Upper',
+                    ]);
+                    $room->beds()->create([
+                        'deck'     => "Deck $deck",
+                        'position' => 'Lower',
+                    ]);
+                }
+            } else {
+                for ($i = 1; $i <= $request->total_beds; $i++) {
+                    $room->beds()->create([
+                        'deck'     => "Bed $i",
+                        'position' => null,
+                    ]);
+                }
             }
         }
 
         return redirect()->route('admin.rooms.index')->with('success', 'Room updated successfully.');
     }
+
 
     public function destroy(Room $room)
     {

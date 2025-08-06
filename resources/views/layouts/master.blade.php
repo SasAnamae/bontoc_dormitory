@@ -194,6 +194,20 @@
         });
     </script>
     @endif
+    <script>
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll('.tab-pane');
+        tabs.forEach(tab => {
+            tab.classList.remove('show', 'active');
+        });
+
+        const target = document.getElementById(tabId);
+        if (target) {
+            target.classList.add('show', 'active');
+        }
+    }
+</script>
+
 </body>
 </html>
 

@@ -10,27 +10,9 @@
     </div>
     <div class="card shadow-sm rounded-4 mx-auto" style="max-width: 900px;">
         <div class="card-body p-4">
-            <form action="{{ route('student.profile.update', $profile->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-                @include('student.profile.form', ['profile' => $profile])
-                <div class="d-flex justify-content-end gap-2 mt-4">
-                    <button type="submit" class="btn btn-success rounded-pill px-4">
-                        <i class="fas fa-save me-2"></i> Save Changes
-                    </button>
-                    @if(Auth::user()->dormitoryAgreement)
-                        <a href="{{ route('student.agreement.edit', Auth::user()->dormitoryAgreement->id) }}" class="btn btn-primary rounded-pill px-4">
-                            Next: Dormitory Agreement
-                        </a>
-                    @else
-                        <a href="{{ route('student.agreement.create') }}" class="btn btn-primary rounded-pill px-4">
-                            Next: Dormitory Agreement
-                        </a>
-                    @endif
-                </div>
-            </form>
+            {{-- $profile is passed, $isEdit = true --}}
+            @include('student.profile.form', ['isEdit' => true, 'profile' => $profile])
         </div>
     </div>
 </div>
 @endsection
-

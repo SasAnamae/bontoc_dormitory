@@ -1,140 +1,189 @@
-<div class="card shadow-sm rounded-4 mb-4">
-    <div class="card-body">
-        <h5 class="fw-bold text-primary mb-3">Personal Information</h5>
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label for="course_section" class="form-label fw-semibold">Course & Section</label>
-                <input type="text" name="course_section" id="course_section" class="form-control rounded-pill"
-                       value="{{ old('course_section', $profile->course_section ?? '') }}" required>
-            </div>
-            <div class="col-md-6">
-                <label for="home_address" class="form-label fw-semibold">Home Address</label>
-                <input type="text" name="home_address" id="home_address" class="form-control rounded-pill"
-                       value="{{ old('home_address', $profile->home_address ?? '') }}" required>
-            </div>
-            <div class="col-md-6">
-                <label for="cellphone" class="form-label fw-semibold">Cellphone Number</label>
-                <input type="text" name="cellphone" id="cellphone" class="form-control rounded-pill"
-                       value="{{ old('cellphone', $profile->cellphone ?? Auth::user()->cellphone ?? '') }}" required>
-            </div>
-            <div class="col-md-6">
-                <label for="email" class="form-label fw-semibold">Email</label>
-                <input type="email" name="email" id="email" class="form-control rounded-pill"
-                       value="{{ old('email', $profile->email ?? Auth::user()->email ?? '') }}" required>
-            </div>
-            <div class="col-md-6">
-                <label for="birthday" class="form-label fw-semibold">Birthday</label>
-                <input type="date" name="birthday" id="birthday" class="form-control rounded-pill"
-                       value="{{ old('birthday', $profile->birthday ?? '') }}" required>
-            </div>
-            <div class="col-md-3">
-                <label for="age" class="form-label fw-semibold">Age</label>
-                <input type="number" name="age" id="age" class="form-control rounded-pill"
-                       value="{{ old('age', $profile->age ?? '') }}" required>
-            </div>
-            <div class="col-md-3">
-                <label for="religion" class="form-label fw-semibold">Religion</label>
-                <input type="text" name="religion" id="religion" class="form-control rounded-pill"
-                       value="{{ old('religion', $profile->religion ?? '') }}">
-            </div>
-        </div>
+@extends('layouts.master')
+@section('title', 'Occupant Profile')
+@section('content')
+
+<form method="POST" action="{{ route('student.profile.store') }}">
+@csrf
+
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+    <meta charset="UTF-8">
+    <title>Occupant Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Cambria, serif;
+            font-size: 11pt;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .center {
+            text-align: center;
+        }
+        .form-border {
+            border: 1px solid #000;
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 800px;
+            background: white;
+        }
+        p, td, th {
+            margin: 0;
+        }
+        input {
+            border: none;
+            border-bottom: 1px solid #000;
+            font-family: Cambria, serif;
+            font-size: 11pt;
+        }
+        .input-line {
+            width: 200px;
+        }
+        .input-wide {
+            width: 300px;
+        }
+        .signature{
+            text-align: right;
+            margin-top: -5px;
+            margin-right: 20px;
+            font-size: 11pt;
+        }
+        .signature-input {
+            width: 250px;
+            border-bottom: 1px solid #000;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #000;
+            text-align: center;
+            padding: 4px;
+        }
+        .flex-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+         .course-year-section {
+            text-align: center;
+            margin-top: -5px;
+            font-size: 11pt;
+            gap: 5px; 
+        }
+        .input-short {
+            text-align: center;
+            width: 60px;
+            border: none;
+            border-bottom: 1px solid #000;
+            font-family: Cambria, serif;
+            font-size: 11pt;
+        }
+
+        @media print {
+            body { margin: 0.5in; }
+            input, select { border: none !important; }
+            button, .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-border">
+    <div class="center">
+        <img src="{{ asset('images/header.png') }}" alt="Header" style="width: 100%; max-width: 700px;">
+    </div>
+    <p class="center"><strong>SLSU DORMITORY</stron  g></p>
+    <p class="center"><strong>OCCUPANT’S PROFILE & CLASS SCHEDULE</strong></p>
+
+    <table style="width: 100%; margin-top: 20px;">
+        @php
+            $application = auth()->user()->applicationForm;
+        @endphp
+        <tr>
+            <td>Occupant's Name: <input type="text" name="full_name" value="{{ auth()->user()->name }}" required></td>
+            <td colspan="2">
+                Course & Section:
+                <input type="text" name="course" value="{{ old('course', $application->course ?? '') }}" class="input-short" placeholder="Course" required>
+                -
+                <input type="text" name="year_section" value="{{ old('year_section', $application->year_section ?? '') }}" class="input-short" placeholder="Year/Section" required>
+            </td>
+
+        </tr>
+        <tr>
+            <td>Home Address: <input type="text" name="home_address" value="{{ old('home_address', $profile->home_address ?? '') }}" class="input-wide" required></td>
+        </tr>
+        <tr>
+            <td>Cellphone Number: <input type="text" name="cellphone" value="{{ old('cellphone', $profile->cellphone ?? '') }}" class="input-line" required></td>
+            <td>Email Address: <input type="email" name="email" value="{{ auth()->user()->email }}" class="input-line"></td>
+        </tr>
+        <tr>
+            <td>Birthday: <input type="date" name="birthday" value="{{ old('birthday', $profile->birthday ?? '') }}" class="input-line"></td>
+            <td>Age: <input type="number" name="age" value="{{ old('age', $profile->age ?? '') }}" class="input-line"></td>
+        </tr>
+        <tr>
+            <td>Religion: <input type="text" name="religion" value="{{ old('religion', $profile->religion ?? '') }}" class="input-line"></td>
+            <td>Scholarship: <input type="text" name="scholarship" value="{{ old('scholarship', $profile->scholarship ?? '') }}" class="input-line"></td>
+        </tr>
+        <tr>
+            <td>Blood Type: <input type="text" name="blood_type" value="{{ old('blood_type', $profile->blood_type ?? '') }}" class="input-line"></td>
+            <td>Allergies: <input type="text" name="allergies" value="{{ old('allergies', $profile->allergies ?? '') }}" class="input-line"></td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 20px;"><strong>Parents:</strong></p>
+    <table style="width: 100%;">
+        <tr>
+            <td>Father: <input type="text" name="father_fullname" value="{{ old('father_fullname', $profile->father_fullname ?? '') }}" class="input-line"></td>
+            <td>Cellphone No.: <input type="text" name="father_phone" value="{{ old('father_phone', $profile->father_phone ?? '') }}" class="input-line"></td>
+        </tr>
+        <tr>
+            <td>Mother: <input type="text" name="mother_fullname" value="{{ old('mother_fullname', $profile->mother_fullname ?? '') }}" class="input-line"></td>
+            <td>Cellphone No.: <input type="text" name="mother_phone" value="{{ old('mother_phone', $profile->mother_phone ?? '') }}" class="input-line"></td>
+        </tr>
+    </table>
+    
+<p style="margin-top: 20px;"><strong>Electrical Gadget/Appliances in the Dorm:</strong></p>
+<ul style="margin-left: 20px;">
+    <li><input type="text" name="electrical_appliances[]" value="{{ old('electrical_appliances.0', $profile->electrical_appliances_array[0] ?? '') }}" class="input-line"></li>
+    <li><input type="text" name="electrical_appliances[]" value="{{ old('electrical_appliances.1', $profile->electrical_appliances_array[1] ?? '') }}" class="input-line"></li>
+    <li><input type="text" name="electrical_appliances[]" value="{{ old('electrical_appliances.2', $profile->electrical_appliances_array[2] ?? '') }}" class="input-line"></li>
+</ul>
+
+
+
+
+    <p>Total Payable Monthly: <input type="text" name="total_monthly" value="{{ old('total_monthly', $profile->monthly_payable ?? '') }}" class="input-line"></p>
+
+    <p class="signature" style="margin-top: 30px;">
+        I hereby certify that the above information is true and correct.
+    </p>
+    <div class="signature">
+        <input type="text" class="signature-input">
+        <p>Signature of Occupant</p>
+    </div>
+
+    <div class="flex-footer">
+        <img src="{{ asset('images/footerl.png') }}" alt="Footer Left" style="height: 60px;">
+        <img src="{{ asset('images/footerr.png') }}" alt="Footer Right" style="height: 90px;">
     </div>
 </div>
 
-<div class="card shadow-sm rounded-4 mb-4">
-    <div class="card-body">
-        <h5 class="fw-bold text-primary mb-3">Parents Information</h5>
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label for="father_fullname" class="form-label fw-semibold">Father’s Full Name</label>
-                <input type="text" name="father_fullname" id="father_fullname" class="form-control rounded-pill"
-                       value="{{ old('father_fullname', $profile->father_fullname ?? '') }}">
-            </div>
-            <div class="col-md-6">
-                <label for="father_phone" class="form-label fw-semibold">Father’s Contact Number</label>
-                <input type="text" name="father_phone" id="father_phone" class="form-control rounded-pill"
-                       value="{{ old('father_phone', $profile->father_phone ?? '') }}">
-            </div>
-            <div class="col-md-6">
-                <label for="mother_fullname" class="form-label fw-semibold">Mother’s Full Name</label>
-                <input type="text" name="mother_fullname" id="mother_fullname" class="form-control rounded-pill"
-                       value="{{ old('mother_fullname', $profile->mother_fullname ?? '') }}">
-            </div>
-            <div class="col-md-6">
-                <label for="mother_phone" class="form-label fw-semibold">Mother’s Contact Number</label>
-                <input type="text" name="mother_phone" id="mother_phone" class="form-control rounded-pill"
-                       value="{{ old('mother_phone', $profile->mother_phone ?? '') }}">
-            </div>
-        </div>
-    </div>
+
+
+<div class="no-print text-end mt-4">
+    <button type="submit" class="btn btn-success">Save Profile</button>
+    <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Print</button>
 </div>
 
-<div class="card shadow-sm rounded-4 mb-4">
-    <div class="card-body">
-      <h5 class="fw-bold text-primary mb-3">Additional Details</h5>
-        <div class="row g-3 mb-4">
-            <div class="col-12">
-                <label class="form-label fw-semibold">Electrical Appliances</label>
-                @php
-                    $appliances = ['Laptop', 'Rice Cooker', 'Electric Fan', 'Kettle', 'Blender'];
-                    $selectedAppliances = old('electrical_appliances', $profile->electrical_appliances ?? '');
-                    $selectedArray = is_string($selectedAppliances) ? explode(',', $selectedAppliances) : [];
-                    $otherAppliance = collect($selectedArray)->filter(fn($item) => !in_array($item, $appliances))->first();
-                @endphp
-                <div class="row g-2">
-                    @foreach ($appliances as $appliance)
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="electrical_appliances[]" 
-                                    value="{{ $appliance }}"
-                                    id="appliance_{{ $loop->index }}"
-                                    {{ in_array($appliance, $selectedArray) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="appliance_{{ $loop->index }}">
-                                    {{ $appliance }}
-                                </label>
-                            </div>
-                        </div>
-                    @endforeach
+</body>
+</html>
+</form>
 
-                    <!-- Others checkbox -->
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="electrical_appliances[]" value="Others"
-                                id="appliance_others"
-                                {{ $otherAppliance ? 'checked' : '' }}>
-                            <label class="form-check-label" for="appliance_others">
-                                Others
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <!-- Input for other appliance -->
-                <div class="mt-2" id="otherApplianceInput" style="{{ $otherAppliance ? '' : 'display:none;' }}">
-                    <input type="text" name="other_appliance" class="form-control rounded-pill mt-2"
-                        placeholder="Specify other appliance"
-                        value="{{ $otherAppliance }}">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label for="total_monthly" class="form-label fw-semibold">Total Monthly Income (₱)</label>
-                <input type="number" name="total_monthly" id="total_monthly" class="form-control rounded-pill" step="0.01"
-                    value="{{ old('total_monthly', $profile->total_monthly ?? '') }}">
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const othersCheckbox = document.getElementById('appliance_others');
-        const otherInput = document.getElementById('otherApplianceInput');
+@endsection
 
-        othersCheckbox.addEventListener('change', function () {
-            if (this.checked) {
-                otherInput.style.display = 'block';
-            } else {
-                otherInput.style.display = 'none';
-                otherInput.querySelector('input').value = '';
-            }
-        });
-    });
-</script>

@@ -5,45 +5,30 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment;
-use App\Models\PaymentSchedule;
 use Illuminate\Support\Facades\Auth;
 use App\Exports\PaymentsExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PaymentController extends Controller
 {
-   public function index()
-{
-    $schedules = PaymentSchedule::whereHas('students', function ($q) {
-        $q->where('users.id', auth()->id());
-    })
-    ->with([
-        'students' => function ($q) {
-            $q->where('users.id', auth()->id());
-        },
-        'payments' => function ($q) {
-            $q->where('user_id', auth()->id());
-        }
-    ])
-    ->orderBy('due_date', 'desc')
-    ->get();
+    public function index()
+    {
+        // Get all payments of the currently authenticated student
+        $payments = Payment::with(['cashier'])
+            ->where('user_id', auth()->id())
+            ->latest('paid_at')
+            ->paginate(20); // paginate for performance
 
-    $student = auth()->user()->load(['payments.schedule.students']);
-
-    return view('student.payments.index', compact('schedules', 'student'));
-}
-
-
-
-
+        return view('student.payments.index', compact('payments'));
+    }
 
     public function download(Request $request)
     {
         $user = auth()->user();
 
-        $payments = Payment::with(['schedule', 'cashier'])
+        $payments = Payment::with(['cashier'])
             ->where('user_id', $user->id)
-            ->latest()
+            ->latest('paid_at')
             ->get();
 
         $filename = $request->input('filename', 'my_payments');

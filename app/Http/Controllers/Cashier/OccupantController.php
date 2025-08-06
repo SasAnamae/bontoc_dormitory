@@ -14,7 +14,7 @@ class OccupantController extends Controller
 {
     public function index()
     {
-        $occupants = User::with(['payments', 'reservations.room.dormitory', 'occupantProfile', 'paymentSchedules'])
+        $occupants = User::with(['payments', 'reservations.room.dormitory', 'occupantProfile'])
             ->where('role', 'student')
             ->where('application_status', 'Approved')
             ->get();

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('student_name');
-            $table->string('course_year');
-            $table->text('agreement_text');
+            $table->string('course');
+            $table->string('year_section');
             $table->date('date_signed');
             $table->timestamps();
         });

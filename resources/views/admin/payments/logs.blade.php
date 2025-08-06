@@ -14,6 +14,7 @@
             </a>
         </div>
     </div>
+
     <div class="card shadow-sm rounded-4">
         <div class="card-body">
             <div class="table-responsive">
@@ -24,7 +25,6 @@
                             <th>Student</th>
                             <th>Course & Year</th>
                             <th>Room</th>
-                            <th>Schedule</th>
                             <th>Amount (₱)</th>
                             <th>OR Number</th>
                             <th>Processed By</th>
@@ -34,24 +34,23 @@
                         @forelse($payments as $payment)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($payment->paid_at)->format('M d, Y H:i') }}</td>
-                                <td>{{ $payment->student?->name ?? '—' }}</td>
-                                <td>{{ $payment->student?->occupantProfile?->course_section ?? '—' }}</td>
-                                <td>{{ $payment->student?->reservations->first()?->room?->name ?? '—' }}</td>
-                                <td>{{ $payment->schedule?->name ?? '—' }}</td>
+                                <td>{{ $payment->user?->name ?? '—' }}</td>
+                                <td>{{ $payment->user?->applicationForm?->course ?? '—' }}-{{ $payment->user?->applicationForm?->year_section ?? '—' }}</td>
+                                <td>{{ $payment->user?->reservations->first()?->room?->name ?? '—' }}</td>
                                 <td>₱{{ number_format($payment->amount, 2) }}</td>
                                 <td>{{ $payment->or_number ?? '—' }}</td>
                                 <td>{{ $payment->cashier?->name ?? 'System' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted">No payment history found.</td>
+                                <td colspan="7" class="text-center text-muted">No payment history found.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
             <div class="mt-3">
-                {{ $payments->links() }} <!-- Pagination -->
+                {{ $payments->links() }}
             </div>
         </div>
     </div>
@@ -66,14 +65,12 @@
             title: 'Download Excel',
             input: 'text',
             inputLabel: 'Enter file name',
-            inputPlaceholder: 'e.g. payment_logs_july',
+            inputPlaceholder: 'e.g. payment_logs_august',
             showCancelButton: true,
             confirmButtonText: 'Download',
             cancelButtonText: 'Cancel',
             inputValidator: (value) => {
-                if (!value) {
-                    return 'File name is required!';
-                }
+                if (!value) return 'File name is required!';
             }
         }).then((result) => {
             if (result.isConfirmed) {
@@ -84,3 +81,4 @@
     });
 </script>
 @endpush
+
