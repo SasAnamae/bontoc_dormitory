@@ -23,7 +23,6 @@ class AdminController extends Controller
             'dormitoriesCount' => Dormitory::count(),
             'roomsCount' => Room::where('available_beds', '>', 0)->count(),
             'availableBeds' => Room::sum('available_beds'),
-            'studentsCount' => User::where('role', 'student')->count(),
             'occupantsCount' => User::where('role', 'student')
                 ->where('application_status', 'approved')->count(),
             'reservationsCount' => Reservation::where('status', 'pending')->count(),

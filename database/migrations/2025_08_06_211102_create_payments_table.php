@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->date('payment_date')->nullable();
+            $table->string('payment_month');
             $table->decimal('amount', 10, 2);
-            $table->string('or_number')->unique();
-            $table->text('remarks')->nullable();
-            $table->enum('status', ['Confirmed'])->default('Confirmed');
-            $table->timestamp('paid_at')->nullable();
-            $table->foreignId('cashier_id')->nullable()->constrained('users')->onDelete('set null');
-
+            $table->decimal('dorm_fee', 10, 2)->default(500);
+            $table->string('appliances')->nullable();
+            $table->decimal('appliance_fee', 10, 2)->default(0);
+            $table->string('or_number')->nullable(); 
+            $table->date('paid_at')->nullable(); 
+            $table->longText('receipt_photo')->nullable();
+            $table->enum('status', ['pending', 'verified'])->default('pending');
             $table->timestamps();
         });
     }

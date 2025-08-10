@@ -67,6 +67,10 @@
         {
             return $this->hasMany(Payment::class, 'user_id');
         }
+        public function payment()
+        {
+            return $this->hasOne(Payment::class)->latest();
+        }
         public function room()
         {
             return $this->belongsTo(Room::class);

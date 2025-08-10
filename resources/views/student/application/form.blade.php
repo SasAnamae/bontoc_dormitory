@@ -123,17 +123,54 @@
 
     <p style="text-indent: 36pt;">
         The undersigned wishes to apply as occupant/resident in the SLSU Dormitory during the semester of SY
-        <input type="text" name="school_year" value="{{ old('school_year') }}" class="short-input" placeholder="20__ - 20__" required>.
-        I am fully aware of the terms and conditions relative to dormitory occupancy and those stipulated in the contract.
-    </p>
+       <select name="school_year" class="short-input" required>
+            <option value="">Select SY</option>
+            @foreach ($schoolYears as $year)
+                @php
+                    $sy_display = $year->format('Y') . ' - ' . $year->copy()->addYear()->format('Y');
+                @endphp
+                <option value="{{ $year->toDateString() }}" {{ old('school_year', optional($application)->school_year) == $year->toDateString() ? 'selected' : '' }}>
+                    {{ $sy_display }}
+                </option>
+            @endforeach
+        </select>.
+                I am fully aware of the terms and conditions relative to dormitory occupancy and those stipulated in the contract.
+        </p>
 
     <p class="truly">Very truly yours,</p>
     <input type="text" name="full_name" value="{{ old('full_name', Auth::user()->name) }}" class="signature-input" required>
     <p class="signature-label">Signature over printed name</p>
     <div class="course-year-section">
-        <input type="text" name="course" value="{{ old('course') }}" class="short-input" placeholder="Course" required>
-        <span>-</span>
-        <input type="text" name="year_section" value="{{ old('year_section') }}" class="short-input" placeholder="Year / Section" required>
+       <!-- Course Dropdown -->
+<select name="course" class="long-input" required>
+    <option value="">Select Course</option>
+    <option value="BSIT" {{ old('course', optional($application)->course) == 'BSIT' ? 'selected' : '' }}>
+        BSIT
+    </option>
+    <option value="BSMB" {{ old('course', optional($application)->course) == 'BSMB' ? 'selected' : '' }}>
+        BSMB
+    </option>
+    <option value="BSA" {{ old('course', optional($application)->course) == 'BSA' ? 'selected' : '' }}>
+        BSA
+    </option>
+    <option value="BSFI" {{ old('course', optional($application)->course) == 'BSFI' ? 'selected' : '' }}>
+        BSFI
+    </option>
+</select>
+
+<!-- Year Section Dropdown -->
+<select name="year_section" class="short-input" required>
+    <option value="">Select Year & Section</option>
+    @foreach ([1,2,3,4] as $year)
+        @foreach (['A','B','C'] as $section)
+            @php $value = $year . $section; @endphp
+            <option value="{{ $value }}" {{ old('year_section', optional($application)->year_section) == $value ? 'selected' : '' }}>
+                {{ $value }}
+            </option>
+        @endforeach
+    @endforeach
+</select>
+
     </div>
     <p class="label-course">Course / Year / Section</p>
 

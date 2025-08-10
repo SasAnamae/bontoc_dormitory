@@ -12,34 +12,47 @@
 
    <div class="row g-4">
     @forelse($students as $student)
-        @php
+            @php
             $hasApplication = $student->applicationForm !== null;
-            $hasProfile = $student->occupantProfile !== null;
             $hasAgreement = $student->dormitoryAgreement !== null;
+            $hasProfile = $student->occupantProfile !== null;
+            $hasVerifiedPayment = $student->payments->where('status', 'verified')->isNotEmpty();
 
             if (!$hasApplication) {
                 $status = 'No Application';
                 $badgeColor = 'secondary';
+
+            } elseif (!$hasVerifiedPayment) {
+                $status = 'Waiting: Payment Verification';
+                $badgeColor = 'warning';
+
             } elseif ($student->application_status === 'Rejected') {
                 $status = 'Rejected';
                 $badgeColor = 'danger';
-            } elseif ($student->application_status === 'Approved' && $hasProfile && $hasAgreement) {
-                $status = 'Fully Approved';
-                $badgeColor = 'success';
-            } elseif ($student->application_status === 'Approved' && !$hasProfile) {
-                $status = 'Waiting: Profile';
-                $badgeColor = 'warning';
-            } elseif ($student->application_status === 'Approved' && $hasProfile && !$hasAgreement) {
-                $status = 'Waiting: Agreement';
-                $badgeColor = 'warning';
+
             } elseif ($student->application_status === 'Pending') {
                 $status = 'Awaiting Approval';
                 $badgeColor = 'info';
+
+            } elseif ($student->application_status === 'Approved' && $hasProfile && $hasAgreement) {
+                $status = 'Fully Approved';
+                $badgeColor = 'success';
+
+            } elseif ($student->application_status === 'Approved' && !$hasProfile) {
+                $status = 'Waiting: Profile';
+                $badgeColor = 'warning';
+
+            } elseif ($student->application_status === 'Approved' && $hasProfile && !$hasAgreement) {
+                $status = 'Waiting: Agreement';
+                $badgeColor = 'warning';
             } else {
-                $status = 'In Progress';
-                $badgeColor = 'secondary';
+                $status = 'Awaiting Approval';
+                $badgeColor = 'info';
             }
+
         @endphp
+
+
 
         <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center">
             <div class="folder-wrapper position-relative">

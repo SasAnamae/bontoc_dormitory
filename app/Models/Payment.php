@@ -13,13 +13,15 @@ class Payment extends Model
 
     protected $fillable = [
         'user_id',
-        'schedule_id',
+        'payment_month',
         'amount',
+        'dorm_fee',
+        'appliances',
+        'appliance_fee',
         'or_number',
-        'remarks',
-        'status',
         'paid_at',
-        'cashier_id',
+        'receipt_photo',
+        'status',
     ];
 
     protected $casts = [

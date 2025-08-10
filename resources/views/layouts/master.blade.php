@@ -7,8 +7,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { padding-top: 56px; }
+  <style>
+        body {
+            padding-top: 56px;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        /* Sidebar - Desktop */
         .sidebar {
             height: 100vh;
             position: fixed;
@@ -17,47 +22,105 @@
             width: 220px;
             background-color: #f8f9fa;
             padding-top: 1rem;
-            font-family: 'Poppins', sans-serif !important;
+            transition: transform 0.3s ease-in-out;
         }
+
         .sidebar .nav-link.active {
             background-color: #e9ecef;
             font-weight: bold;
         }
+
+        /* Content - Desktop */
         .content {
             margin-left: 220px;
             padding: 1.5rem;
+            transition: margin-left 0.3s ease-in-out;
         }
-        .dropdown-menu {
-            max-height: 300px;
-            overflow-y: auto;
+
+        /* Mobile View */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1050;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .sidebar-overlay {
+                position: fixed;
+                top: 56px;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.3);
+                display: none;
+                z-index: 1049;
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+            /* Show toggle button only on mobile */
+            .sidebar-toggle {
+                display: inline-block !important;
+            }
+            /* Sidebar links */
+            .sidebar .nav-link {
+                color: #fff;
+                padding: 10px;
+            }
+            .sidebar .nav-link.active {
+                background: #495057;
+                border-radius: 4px;
+            }
         }
-        .dropdown-header {
-            font-size: 0.9rem;
-            color: #6c757d;
+
+        /* Hide toggle button on desktop */
+        .sidebar-toggle {
+            display: none;
+            border: none;
+            background: none;
+            font-size: 1.5rem;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     @auth
         @include('layouts.partials.topnav')
-        @include('layouts.partials.sidenav')
+            @include('layouts.partials.sidenav')
     @endauth
 
-    <div class="content">
-        {{-- Flash Messages --}}
+        <div class="content">
         <div class="container mt-3">
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
         </div>
-
         @yield('content')
         @stack('scripts')
     </div>
+
+      {{-- Toggle Sidebar Script --}}
+    <script>
+        const sidebar = document.getElementById('sidebarMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking overlay
+        overlay.addEventListener('click', toggleSidebar);
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

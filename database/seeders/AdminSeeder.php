@@ -18,10 +18,10 @@ class AdminSeeder extends Seeder
         ]);
 
          User::create([
-            'name' => 'Cashier',
-            'email' => 'cashier@dormitory.com',
+            'name' => 'John Doe',
+            'email' => 'j@test.com',
             'password' => Hash::make('password123'),
-            'role' => 'cashier', 
+            'role' => 'student', 
         ]);
     }
 }

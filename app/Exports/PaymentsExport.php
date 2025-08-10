@@ -18,15 +18,16 @@ class PaymentsExport implements FromCollection, WithHeadings, WithStyles, Should
         $this->payments = $payments;
     }
 
-    public function collection()
+   public function collection()
     {
         return $this->payments->map(function ($payment) {
             $user = $payment->user;
+            $applicationForm = $user->applicationForm;
 
             return [
                 'Payment ID'     => $payment->id,
                 'Student Name'   => $user->name ?? 'N/A',
-                'Course & Year'  => $user->occupantProfile?->course ?? 'N/A' . ' ' . $user->occupantProfile?->year_section ?? 'N/A',
+                'Course & Year'  => ($applicationForm?->course ?? 'N/A') . ' ' . ($applicationForm?->year_section ?? 'N/A'),
                 'Room'           => $user->reservations->first()?->room?->name ?? 'N/A',
                 'Amount (₱)'     => number_format($payment->amount, 2),
                 'OR Number'      => $payment->or_number ?? '—',
@@ -36,6 +37,8 @@ class PaymentsExport implements FromCollection, WithHeadings, WithStyles, Should
             ];
         });
     }
+
+
 
     public function headings(): array
     {

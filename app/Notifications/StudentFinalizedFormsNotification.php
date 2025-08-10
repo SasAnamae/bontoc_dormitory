@@ -34,7 +34,7 @@ class StudentFinalizedFormsNotification extends Notification implements ShouldQu
     public function toDatabase($notifiable)
     {
         return [
-            'message' => "{$this->student->name} has submitted their Occupant Profile and Dormitory Agreement.",
+            'message' => "{$this->student->name} has submitted their Occupant Profile.",
             'url' => route('admin.applications.show', $this->student->id),
         ];
     }

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Payment;
 use App\Exports\PaymentsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\PaymentStatusNotification;
 
 class PaymentController extends Controller
 {
@@ -16,12 +17,26 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $students = User::where('role', 'student')
-            ->where('application_status', 'Approved')
-            ->with(['payments', 'occupantProfile'])
-            ->get();
+        $payments = Payment::with(['user'])
+            ->whereHas('user', function ($query) {
+                $query->where('role', 'student');
+            })
+            ->orderByDesc('paid_at')
+            ->paginate(20);
 
-        return view('admin.payments.index', compact('students'));
+        return view('admin.payments.index', compact('payments'));
+    }
+
+
+    public function verify(Payment $payment)
+    {
+        $payment->status = 'verified';
+        $payment->save();
+
+        // Optional: notify student
+        $payment->user->notify(new \App\Notifications\PaymentStatusNotification($payment));
+
+        return redirect()->back()->with('success', 'Payment verified successfully.');
     }
 
     /**
@@ -29,12 +44,14 @@ class PaymentController extends Controller
      */
     public function logs()
     {
-        $payments = Payment::with(['user', 'cashier'])
-            ->orderByDesc('paid_at')
-            ->paginate(20);
+         $payments = Payment::with(['user'])
+        ->where('status', 'verified')
+        ->orderByDesc('paid_at')
+        ->paginate(20);
 
         return view('admin.payments.logs', compact('payments'));
     }
+
 
     /**
      * Export payment overview (grouped per student).
@@ -42,8 +59,11 @@ class PaymentController extends Controller
     public function export(Request $request)
     {
         $fileName = $request->query('filename', 'admin_payments_overview') . '.xlsx';
-        $payments = Payment::with(['user', 'cashier'])->get();
-
+       
+        $payments = Payment::with(['user'])
+            ->where('status', 'verified')
+            ->orderByDesc('paid_at')
+            ->get();
         return Excel::download(new PaymentsExport($payments), $fileName);
     }
 

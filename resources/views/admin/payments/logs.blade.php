@@ -27,6 +27,7 @@
                             <th>Room</th>
                             <th>Amount (₱)</th>
                             <th>OR Number</th>
+                            <th>Receipt</th>
                             <th>Processed By</th>
                         </tr>
                     </thead>
@@ -39,6 +40,14 @@
                                 <td>{{ $payment->user?->reservations->first()?->room?->name ?? '—' }}</td>
                                 <td>₱{{ number_format($payment->amount, 2) }}</td>
                                 <td>{{ $payment->or_number ?? '—' }}</td>
+                                <td>
+                                    @if($payment->receipt_photo)
+                                        <a href="{{ $payment->receipt_photo }}" target="_blank">
+                                            <img src="{{ $payment->receipt_photo }}" alt="Receipt" width="100">
+                                        </a>
+                                    @else
+                                        <span class="text-muted">No receipt uploaded</span>
+                                    @endif
                                 <td>{{ $payment->cashier?->name ?? 'System' }}</td>
                             </tr>
                         @empty

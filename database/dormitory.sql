@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 29, 2025 at 11:58 AM
+-- Generation Time: Aug 08, 2025 at 03:25 PM
 -- Server version: 5.7.33
 -- PHP Version: 8.1.23
 
@@ -53,6 +53,28 @@ CREATE TABLE `announcement_user` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `application_forms`
+--
+
+CREATE TABLE `application_forms` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `school_year` date NOT NULL,
+  `full_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `course` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `year_section` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `emergency_contact_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `emergency_contact_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `emergency_contact_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `present_status` enum('new_student','old_new_applicant','returnee') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `admin_approved` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `beds`
 --
 
@@ -90,8 +112,8 @@ CREATE TABLE `dormitory_agreements` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `student_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `course_year` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `agreement_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `course` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `year_section` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `date_signed` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -144,13 +166,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2025_07_14_175830_create_notifications_table', 1),
 (13, '2025_07_17_030108_create_occupant_profiles_table', 1),
 (14, '2025_07_17_112517_dormitory_agreements_table', 1),
-(15, '2025_07_18_161212_add_student_forms_to_users_table', 1),
-(16, '2025_07_19_024301_create_payment_schedules_table', 1),
-(17, '2025_07_20_080130_create_payments_table', 1),
-(18, '2025_07_24_070458_create_payment_schedule_user_table', 1),
-(19, '2025_07_25_142141_create_student_reports_table', 1),
-(20, '2025_07_26_141855_create_announcements_table', 1),
-(21, '2025_07_26_143847_create_announcement_user_table', 1);
+(15, '2025_07_18_161212_add_application_status_to_users_table', 1),
+(16, '2025_07_25_142141_create_student_reports_table', 1),
+(17, '2025_07_26_141855_create_announcements_table', 1),
+(18, '2025_07_26_143847_create_announcement_user_table', 1),
+(19, '2025_08_03_144054_create_application_forms_table', 1),
+(20, '2025_08_06_211102_create_payments_table', 1);
 
 -- --------------------------------------------------------
 
@@ -178,7 +199,8 @@ CREATE TABLE `notifications` (
 CREATE TABLE `occupant_profiles` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `course_section` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `course` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `year_section` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `home_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cellphone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -231,44 +253,15 @@ CREATE TABLE `password_reset_tokens` (
 CREATE TABLE `payments` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `schedule_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `payment_month` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `or_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remarks` text COLLATE utf8mb4_unicode_ci,
-  `status` enum('Confirmed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Confirmed',
-  `paid_at` timestamp NULL DEFAULT NULL,
-  `cashier_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `payment_schedules`
---
-
-CREATE TABLE `payment_schedules` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rate` decimal(10,2) NOT NULL,
-  `due_date` date NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `payment_schedule_user`
---
-
-CREATE TABLE `payment_schedule_user` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `payment_schedule_id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `additional_fee` decimal(10,2) DEFAULT NULL,
-  `total_due` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `dorm_fee` decimal(10,2) NOT NULL DEFAULT '500.00',
+  `appliances` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `appliance_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `or_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paid_at` date DEFAULT NULL,
+  `receipt_photo` longtext COLLATE utf8mb4_unicode_ci,
+  `status` enum('pending','verified') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -357,14 +350,21 @@ CREATE TABLE `users` (
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'student',
   `agreed_to_terms` tinyint(1) NOT NULL DEFAULT '0',
-  `student_forms` tinyint(1) NOT NULL DEFAULT '0',
-  `application_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Pending',
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `application_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `role`, `agreed_to_terms`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `application_status`) VALUES
+(1, 'Super Admin', 'admin@dormitory.com', 'admin', 0, NULL, '$2y$12$ctlFSf9aZrUPpufEj6FRX.nKPAp.6g/e6DkxEbWT8QEb9wooZM6He', NULL, '2025-08-08 15:24:26', '2025-08-08 15:24:26', 'Pending'),
+(2, 'John Doe', 'j@test.com', 'student', 0, NULL, '$2y$12$ncnd1FNeOAzKR9CWgxIpKexqLZh8Elbfv0DLsMeToZqq40DhjzJc.', NULL, '2025-08-08 15:24:26', '2025-08-08 15:24:26', 'Pending');
 
 --
 -- Indexes for dumped tables
@@ -383,6 +383,13 @@ ALTER TABLE `announcement_user`
   ADD PRIMARY KEY (`id`),
   ADD KEY `announcement_user_announcement_id_foreign` (`announcement_id`),
   ADD KEY `announcement_user_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `application_forms`
+--
+ALTER TABLE `application_forms`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_forms_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `beds`
@@ -448,24 +455,7 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `payments`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `payments_or_number_unique` (`or_number`),
-  ADD KEY `payments_user_id_foreign` (`user_id`),
-  ADD KEY `payments_schedule_id_foreign` (`schedule_id`),
-  ADD KEY `payments_cashier_id_foreign` (`cashier_id`);
-
---
--- Indexes for table `payment_schedules`
---
-ALTER TABLE `payment_schedules`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `payment_schedule_user`
---
-ALTER TABLE `payment_schedule_user`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `payment_schedule_user_payment_schedule_id_foreign` (`payment_schedule_id`),
-  ADD KEY `payment_schedule_user_user_id_foreign` (`user_id`);
+  ADD KEY `payments_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `personal_access_tokens`
@@ -522,6 +512,12 @@ ALTER TABLE `announcement_user`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `application_forms`
+--
+ALTER TABLE `application_forms`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `beds`
 --
 ALTER TABLE `beds`
@@ -549,7 +545,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `occupant_profiles`
@@ -561,18 +557,6 @@ ALTER TABLE `occupant_profiles`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `payment_schedules`
---
-ALTER TABLE `payment_schedules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `payment_schedule_user`
---
-ALTER TABLE `payment_schedule_user`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -603,7 +587,7 @@ ALTER TABLE `student_reports`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -615,6 +599,12 @@ ALTER TABLE `users`
 ALTER TABLE `announcement_user`
   ADD CONSTRAINT `announcement_user_announcement_id_foreign` FOREIGN KEY (`announcement_id`) REFERENCES `announcements` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `announcement_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `application_forms`
+--
+ALTER TABLE `application_forms`
+  ADD CONSTRAINT `application_forms_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `beds`
@@ -638,16 +628,7 @@ ALTER TABLE `occupant_profiles`
 -- Constraints for table `payments`
 --
 ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_cashier_id_foreign` FOREIGN KEY (`cashier_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `payments_schedule_id_foreign` FOREIGN KEY (`schedule_id`) REFERENCES `payment_schedules` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `payments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `payment_schedule_user`
---
-ALTER TABLE `payment_schedule_user`
-  ADD CONSTRAINT `payment_schedule_user_payment_schedule_id_foreign` FOREIGN KEY (`payment_schedule_id`) REFERENCES `payment_schedules` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `payment_schedule_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `reservations`

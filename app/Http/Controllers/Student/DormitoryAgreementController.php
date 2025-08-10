@@ -34,14 +34,8 @@ class DormitoryAgreementController extends Controller
             'date_signed' => $request->date_signed,
         ]);
 
-        $admins = User::where('role','admin')->get();
-
-        Notification::send($admins, 
-        new StudentFinalizedFormsNotification(auth()->user()));
-
-
         return redirect()->route('student.dashboard')
-            ->with('success', 'Dormitory Agreement saved successfully!');
+            ->with('success', 'Dormitory Agreement saved successfully. Please proceed to Cashier for Payment!');
     }
 
     public function edit(DormitoryAgreement $agreement)

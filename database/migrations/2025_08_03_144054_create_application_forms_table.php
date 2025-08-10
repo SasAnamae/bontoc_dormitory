@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('application_forms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('school_year');
+            $table->date('school_year');
             $table->string('full_name');
             $table->string('course');
             $table->string('year_section');
@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('emergency_contact_number');
             $table->enum('present_status', ['new_student','old_new_applicant', 'returnee'                
             ]);
-            $table->boolean('cashier_approved')->default(false);
             $table->boolean('admin_approved')->default(false);
             $table->timestamps();
         });

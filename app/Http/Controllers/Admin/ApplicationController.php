@@ -22,7 +22,7 @@ class ApplicationController extends Controller
                 ->orWhereHas('occupantProfile')
                 ->orWhereHas('dormitoryAgreement');
         })
-        ->with('applicationForm', 'occupantProfile', 'dormitoryAgreement')
+        ->with('applicationForm', 'occupantProfile', 'dormitoryAgreement', 'payment')
         ->get();
 
         return view('admin.applications.index', compact('students'));
@@ -31,13 +31,19 @@ class ApplicationController extends Controller
 
     public function approve($id)
     {
-        $student = User::findOrFail($id);
-        $student->application_status = 'Approved'; // this is OK, it's a string
+        $student = User::with('payments')->findOrFail($id);
+
+        $hasVerifiedPayment = $student->payments->where('status', 'verified')->isNotEmpty();
+
+        if (!$hasVerifiedPayment) {
+            return back()->with('error', 'Cannot approve application. Payment not verified.');
+        }
+
+        $student->application_status = 'Approved';
         $student->save();
 
-        // ✅ Use integer for admin_approved
         if ($student->applicationForm) {
-            $student->applicationForm->admin_approved = 1; // 1 = Approved
+            $student->applicationForm->admin_approved = 1;
             $student->applicationForm->save();
         }
 
@@ -48,7 +54,15 @@ class ApplicationController extends Controller
 
     public function reject($id)
     {
-        $student = User::findOrFail($id);
+        $student = User::with('payments')->findOrFail($id);
+
+        // Check if there's at least one verified payment
+        $hasVerifiedPayment = $student->payments->where('status', 'verified')->isNotEmpty();
+
+        if (!$hasVerifiedPayment) {
+            return back()->with('error', 'Cannot reject application. Payment not verified.');
+        }
+
         $student->application_status = 'Rejected';
         $student->save();
 
@@ -61,6 +75,8 @@ class ApplicationController extends Controller
 
         return back()->with('success', 'Application rejected successfully.');
     }
+
+
 
 
 
@@ -113,7 +129,6 @@ class ApplicationController extends Controller
 
 
         $student->application_status = null;
-        $student->student_forms = false;
         $student->save();
 
         return redirect()->route('admin.applications.index')

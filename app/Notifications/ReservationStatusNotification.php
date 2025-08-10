@@ -38,7 +38,7 @@ class ReservationStatusNotification extends Notification
     {
         // If reservation was passed (normal usage)
         if ($this->reservation) {
-            $message = "Your application for {$this->reservation->bed->room->name}, {$this->reservation->bed->deck} {$this->reservation->bed->position} has been {$this->reservation->status}.";
+            $message = "Your reservation for {$this->reservation->bed->room->name}, {$this->reservation->bed->deck} {$this->reservation->bed->position} has been {$this->reservation->status}.";
 
             $url = null;
             if ($this->reservation->status === 'Approved') {

@@ -16,11 +16,12 @@ use App\Http\Controllers\Student\RoomController;
 use App\Http\Controllers\Student\DormitoryAgreementController;
 use App\Http\Controllers\Student\StudentFormsController;
 use App\Http\Controllers\Admin\OccupantProfileController as AdminOccupantProfileController;
-use App\Http\Controllers\Cashier\PaymentController;
 use App\Http\Controllers\Student\StudentReportController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Student\ApplicationFormController;
-use App\Http\Controllers\Cashier\ApplicationController;
+use App\Http\Controllers\Student\PaymentController;
+use App\Http\Controllers\Admin\PaymentControllerr;
+use App\Models\Payment;
 use App\Models\Announcement;
 
     // Landing Page
@@ -78,7 +79,9 @@ use App\Models\Announcement;
         Route::post('/applications/{id}/approve', [App\Http\Controllers\Admin\ApplicationController::class, 'approve'])->name('applications.approve');
         Route::post('/applications/{id}/reject', [App\Http\Controllers\Admin\ApplicationController::class, 'reject'])->name('applications.reject');
       
-
+        Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
+        Route::post('/payments/{payment}/verify', [App\Http\Controllers\Admin\PaymentController::class, 'verify'])->name('payments.verify');
+        Route::post('/payments/{payment}/reject', [App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
         Route::get('/payments/export', [App\Http\Controllers\Admin\PaymentController::class, 'export'])->name('payments.export');
         Route::get('/payments/logs/export', [App\Http\Controllers\Admin\PaymentController::class, 'exportLogs'])->name('payments.logs.export');
         Route::get('/payments/logs', [App\Http\Controllers\Admin\PaymentController::class, 'logs'])
@@ -125,6 +128,9 @@ use App\Models\Announcement;
         Route::put('/profile/{profile}', [OccupantProfileController::class, 'update'])->name('profile.update');
     
         Route::get('/payments', [App\Http\Controllers\Student\PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/create', [App\Http\Controllers\Student\PaymentController::class, 'create'])->name('payments.create');
+        Route::post('/payments', [App\Http\Controllers\Student\PaymentController::class, 'store'])->name('payments.store');
+        Route::get('/payments/{payment}', [App\Http\Controllers\Student\PaymentController::class, 'show'])->name('payments.show');
         Route::get('/payments/download', [App\Http\Controllers\Student\PaymentController::class, 'download'])->name('payments.download');
 
         Route::get('report', [StudentReportController::class, 'index'])->name('report.index');
@@ -157,18 +163,6 @@ use App\Models\Announcement;
 
             return redirect()->to($notification->data['url'] ?? url()->previous());
         })->where('id', '[0-9a-fA-F\-]+')->name('notifications.read');
-    });
-
-
-    Route::middleware(['auth', 'role:cashier'])->prefix('cashier')->name('cashier.')->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\Cashier\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/occupants', [App\Http\Controllers\Cashier\OccupantController::class, 'index'])->name('occupants.index');
-        Route::get('/occupants/download', [App\Http\Controllers\Cashier\OccupantController::class, 'download'])->name('occupants.download');
-        Route::get('/occupants/export', [App\Http\Controllers\Cashier\OccupantController::class, 'export'])->name('occupants.export');
-        Route::resource('payments', App\Http\Controllers\Cashier\PaymentController::class)->except(['show']);;
-        Route::get('payments/download', [App\Http\Controllers\Cashier\PaymentController::class, 'download'])
-        ->name('payments.download');
-        Route::get('/application/{user}', [App\Http\Controllers\Cashier\ApplicationController::class, 'show'])->name('application.show');
     });
 
     // Announcement Routes

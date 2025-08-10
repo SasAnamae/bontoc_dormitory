@@ -6,7 +6,6 @@
 <div class="container mt-4">
     <h1 class="mb-4">Welcome, {{ Auth::user()->name }}</h1>
 
-    <!-- First Row -->
     <div class="row">
         <!-- Total Dormitories -->
         <div class="col-md-3 mb-4">
@@ -41,20 +40,6 @@
             </div>
         </div>
 
-        <!-- Total Students -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow-sm border-warning">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-warning">Students</h5>
-                    <h2 class="card-text fw-bold">{{ $studentsCount }}</h2>
-                    <p class="mb-0 text-muted">Registered</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Second Row -->
-    <div class="row">
         <!-- Pending Reservations -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-info">
@@ -77,7 +62,7 @@
             </div>
         </div>
 
-         <!-- Monthly Payments -->
+        <!-- Monthly Payments -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-danger">
                 <div class="card-body text-center">
@@ -89,12 +74,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Placeholder (empty card to complete the row) -->
-        <div class="col-md-3 mb-4">
-            <div class="card border-0 shadow-none bg-transparent"></div>
-        </div>
     </div>
 </div>
 @endsection
-
