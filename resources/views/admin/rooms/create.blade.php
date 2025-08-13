@@ -30,7 +30,7 @@
                     <input type="file" name="photo" class="form-control rounded-pill" accept="image/*">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Total Beds</label>
+                    <label class="form-label fw-semibold">Total Bed Space</label>
                     <input type="number" name="total_beds" class="form-control rounded-pill" placeholder="e.g., 6" required min="1">
                 </div>
                 <div class="col-md-6">

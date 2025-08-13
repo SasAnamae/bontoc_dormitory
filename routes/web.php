@@ -109,6 +109,9 @@ use App\Models\Announcement;
     // ==================== STUDENT ROUTES ==================== //
     Route::middleware(['auth', 'role:student', 'check.terms'])->prefix('student')->name('student.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
+        Route::delete('/{id}/reset-progress', [App\Http\Controllers\Student\DashboardController::class, 'resetProgress'])
+    ->name('reset.progress');
+
         Route::get('/terms', [App\Http\Controllers\StudentController::class, 'showTerms'])->name('terms');
         Route::post('/terms/agree', [App\Http\Controllers\StudentController::class, 'agreeTerms'])->name('terms.agree');
 

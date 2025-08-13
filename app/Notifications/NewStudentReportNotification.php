@@ -30,7 +30,6 @@ class NewStudentReportNotification extends Notification implements ShouldQueue
             'title' => 'New Student Report Submitted',
             'message' => $this->report->title,
             'report_id' => $this->report->id,
-            'student_name' => $this->report->student->name,
             'url' => route('admin.reports.show', $this->report->id)
         ];
     }

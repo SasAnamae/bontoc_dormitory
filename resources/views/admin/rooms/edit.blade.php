@@ -37,7 +37,7 @@
                     @endif
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Total Beds</label>
+                    <label class="form-label fw-semibold">Total Bed Space</label>
                     <input type="number" name="total_beds" class="form-control rounded-pill" value="{{ $room->total_beds }}" required min="1">
                 </div>
                 <div class="col-md-6">

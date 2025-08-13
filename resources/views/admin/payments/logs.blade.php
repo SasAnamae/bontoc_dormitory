@@ -1,4 +1,4 @@
-@extends('layouts.master')
+<!-- @extends('layouts.master')
 @section('title', 'Payment Logs')
 
 @section('content')
@@ -90,4 +90,4 @@
     });
 </script>
 @endpush
-
+ -->

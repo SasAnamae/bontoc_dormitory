@@ -15,9 +15,6 @@
                     <thead class="table-primary">
                         <tr>
                             <th class="py-3 px-4">Title</th>
-                            <th class="py-3">Student</th>
-                            <th class="py-3">Course & Section</th>
-                            <th class="py-3">Room Reserved</th>
                             <th class="py-3">Status</th>
                             <th class="py-3">Date Submitted</th>
                             <th class="py-3 text-end pe-4">Actions</th>
@@ -25,22 +22,8 @@
                     </thead>
                     <tbody>
                         @forelse ($reports as $report)
-                        @php
-                            $student = $report->student;
-                            $reservation = $student?->reservations?->first();
-                            $room = $reservation?->room?->name;
-                            $dorm = $reservation?->room?->dormitory?->name;
-                            $course = $student?->occupantProfile?->course_section;
-                        @endphp
                         <tr>
                             <td class="px-4 fw-semibold text-dark">{{ $report->title }}</td>
-                            <td>{{ $student?->name ?? 'N/A' }}</td>
-                            <td>{{ $course ?? '—' }}</td>
-                            <td>
-                                <span class="text-muted">
-                                    {{ $room ? "$room - $dorm" : 'No Reservation' }}
-                                </span>
-                            </td>
                             <td>
                                 <span class="badge rounded-pill px-3 py-2 text-light
                                     @if($report->status === 'Resolved') bg-success

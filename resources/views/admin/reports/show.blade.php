@@ -19,29 +19,8 @@
             <div class="card shadow-sm rounded-4 h-100">
                 <div class="card-body p-4">
                     <h5 class="fw-bold mb-2">{{ $report->title }}</h5>
-
-                    <p class="text-muted small mb-1">
-                        <strong>Submitted by:</strong> {{ $report->student->name ?? 'Unknown'  }}
-                    </p>
                     <p class="text-muted small mb-1">
                         <strong>Submitted:</strong> {{ $report->created_at->format('F j, Y • h:i A') }}
-                    </p>
-                    <p class="text-muted small mb-1">
-                        <strong>Email:</strong> {{ $report->student->email ?? 'N/A' }}
-                    </p>
-
-                    <p class="text-muted small mb-1">
-                        <strong>Course & Section:</strong> {{ $report->student->occupantProfile->course_section ?? '—' }}
-                    </p>
-
-                    @php
-                        $reservation = $report->student->reservations->first();
-                        $room = $reservation?->room?->name;
-                        $dorm = $reservation?->room?->dormitory?->name;
-                    @endphp
-
-                    <p class="text-muted small mb-3">
-                        <strong>Room Reserved:</strong> {{ $room ? "$room - $dorm" : 'No Reservation' }}
                     </p>
 
                     <p class="text-muted small mb-3">

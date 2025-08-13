@@ -19,8 +19,8 @@ return new class extends Migration
             $table->decimal('dorm_fee', 10, 2)->default(500);
             $table->string('appliances')->nullable();
             $table->decimal('appliance_fee', 10, 2)->default(0);
-            $table->string('or_number')->nullable(); 
-            $table->date('paid_at')->nullable(); 
+            $table->string('or_number')->unique()->nullable();
+            $table->dateTime(column: 'paid_at')->nullable();
             $table->longText('receipt_photo')->nullable();
             $table->enum('status', ['pending', 'verified'])->default('pending');
             $table->timestamps();

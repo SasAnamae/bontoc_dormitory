@@ -162,7 +162,7 @@
 <select name="year_section" class="short-input" required>
     <option value="">Select Year & Section</option>
     @foreach ([1,2,3,4] as $year)
-        @foreach (['A','B','C'] as $section)
+        @foreach (['A','B'] as $section)
             @php $value = $year . $section; @endphp
             <option value="{{ $value }}" {{ old('year_section', optional($application)->year_section) == $value ? 'selected' : '' }}>
                 {{ $value }}
@@ -216,11 +216,61 @@
 <!-- OUTSIDE SUBMIT BUTTONS -->
 <div class="no-print text-end mt-4">
     <button type="submit" class="btn btn-success">Submit Application</button>
-    <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Print</button>
 </div>
 
 </body>
 </html>
 </form>
 @endsection
+<style>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .form-border, .form-border * {
+        visibility: visible;
+    }
+    .form-border {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 6px !important; /* slightly smaller padding */
+        margin: 0 !important;
+        box-sizing: border-box;
+        page-break-inside: avoid;
+        font-size: 13.5px; /* subtle shrink */
+        line-height: 1.2; /* moderate compression */
+    }
+
+    /* Slightly smaller headings */
+    .form-border h1, .form-border h2 {
+        font-size: 17px;
+        margin: 4px 0 !important;
+    }
+    .form-border h3, .form-border h4, .form-border h5, .form-border h6 {
+        font-size: 15px;
+        margin: 3px 0 !important;
+    }
+    .form-border p, .form-border label {
+        margin: 1px 0 !important;
+    }
+
+    /* Tables even tighter */
+    .form-border table {
+        border-collapse: collapse !important;
+        width: 100%;
+    }
+    .form-border table td,
+    .form-border table th {
+        padding: 3px !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 7mm; /* slightly reduced margins */
+    }
+}
+</style>
+
 

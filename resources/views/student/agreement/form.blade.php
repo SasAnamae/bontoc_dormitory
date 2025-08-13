@@ -131,7 +131,6 @@
 </div>
 <div class="no-print text-end mt-4">
     <button type="submit" class="btn btn-success">Submit Agreement</button>
-    <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Print</button>
 </div>
 </body>
 </html>

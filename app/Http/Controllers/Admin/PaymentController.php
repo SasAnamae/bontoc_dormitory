@@ -15,17 +15,38 @@ class PaymentController extends Controller
     /**
      * Show the payment summary grouped by student.
      */
-    public function index()
+   public function index()
     {
-        $payments = Payment::with(['user'])
-            ->whereHas('user', function ($query) {
-                $query->where('role', 'student');
-            })
+        $payments = Payment::with(['user.reservations.room.dormitory'])
             ->orderByDesc('paid_at')
             ->paginate(20);
 
+        foreach ($payments as $payment) {
+            // Get reservation details
+            $reservation = $payment->user->reservations->first();
+            $payment->room_name = $reservation?->room?->name;
+            $payment->dorm_name = $reservation?->room?->dormitory?->name;
+
+            // Expected = dorm fee (500) + appliance fee
+            $expectedAmount = 500 + ($payment->appliance_fee ?? 0);
+
+            // Balance
+            $payment->balance = max($expectedAmount - $payment->amount, 0);
+
+            // Payment status
+            if ($payment->balance == 0) {
+                $payment->payment_status = 'Paid';
+            } elseif ($payment->paid_at && \Carbon\Carbon::parse($payment->paid_at)->lt(now()->subMonth())) {
+                $payment->payment_status = 'Overdue';
+            } else {
+                $payment->payment_status = 'Partial';
+            }
+        }
+
         return view('admin.payments.index', compact('payments'));
     }
+
+
 
 
     public function verify(Payment $payment)

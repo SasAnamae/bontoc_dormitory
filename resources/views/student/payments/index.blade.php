@@ -47,7 +47,7 @@
                         <td>
                           @if($payment->receipt_photo)
                                 <a href="{{ $payment->receipt_photo }}" target="_blank">
-                                    <img src="{{ $payment->receipt_photo }}" alt="Receipt" width="200">
+                                    <img src="{{ $payment->receipt_photo }}" alt="Receipt" width="50">
                                 </a>
                             @else
                                 <p>No receipt uploaded.</p>
